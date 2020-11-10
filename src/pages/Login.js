@@ -1,21 +1,45 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import {
   Grid,
-  Link,
   Typography,
   TextField,
   CircularProgress,
   Button,
 } from "@material-ui/core";
-import withStyles from "@material-ui/core/styles/withStyles";
-import styles from "../styles";
+import useStyles from "@styles";
+import axios from 'axios'
+import AppContext from '@context'
+import {Link} from 'react-router-dom'
 
 function Login(props) {
+  const classes = useStyles()
+    const {context, setContext} = useContext(AppContext)
   const [password, setPassword] = useState("test123");
-  const [email, setEmail] = useState("jmauwerb@gmail.com");
-  const [errors, setErrors] = useState({});
+  const [email, setEmail] = useState("jeroen.werbrouck@hotmail.com");
+  const [loginError, setLoginError] = useState();
   const [loading, setLoading] = useState(false);
-  const { classes } = props;
+
+  async function submitLogin(e) {
+      e.preventDefault()
+      try {
+
+        setLoading(true);
+  
+        const details = await axios.post(`${process.env.REACT_APP_BACKEND}/login`, {}, {
+            auth: {
+                username: email,
+                password,
+            }
+        });
+        
+        setLoading(false);
+        setContext({...context, user: details.data.user, token: details.data.token})
+        
+      } catch (error) {
+        setLoading(false);
+        setLoginError("Could not log in with these credentials")
+      }
+  }
 
   return (
     <div>
@@ -25,17 +49,17 @@ function Login(props) {
           <Typography variant="h2" className={classes.pageTitle}>
             Log in
           </Typography>
-          <form>
+          <form onSubmit={e => submitLogin(e)}>
             <TextField
               id="email"
               name="email"
               type="email"
               label="Email"
-              helperText={errors.emailError}
-              error={errors ? true : false}
+              helperText={loginError}
+              error={loginError ? true : false}
               className={classes.textField}
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e) => {setEmail(e.target.value); setLoginError(null)}}
               fullWidth
             />
             <TextField
@@ -43,11 +67,11 @@ function Login(props) {
               name="password"
               type="password"
               label="Password"
-              helperText={errors.passwordError}
-              error={errors ? true : false}
+              helperText={loginError}
+              error={loginError ? true : false}
               className={classes.textField}
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e) => {setPassword(e.target.value); setLoginError(null)}}
               fullWidth
             />
             <Button
@@ -64,7 +88,7 @@ function Login(props) {
             </Button>
             <br />
             <p styles={{ padding: "20px" }}>
-              Already have an account? Log in <Link to="/login">here</Link>.
+              Don't have an account yet? Create one <Link to="/register">here</Link>.
             </p>
           </form>
         </Grid>
@@ -74,4 +98,4 @@ function Login(props) {
   );
 }
 
-export default withStyles(styles)(Login);
+export default Login;

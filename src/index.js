@@ -7,7 +7,6 @@ import reportWebVitals from './reportWebVitals';
 ReactDOM.render(
   <React.StrictMode>
     <App />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
   </React.StrictMode>,
   document.getElementById('root')
 );

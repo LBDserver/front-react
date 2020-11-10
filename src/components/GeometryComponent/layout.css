@@ -1,0 +1,93 @@
+#myCanvas {
+    background: #ffffff;
+    border:1px solid #000000;
+    width: 100%;
+    height: 300%;
+}
+
+.modelContainer {
+    position: absolute;
+    
+}
+
+.modelContainer .navCube {
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    right: 0;
+    bottom: 0;
+}
+
+/* ----------------------------------------------------------------------------------------------------------*/
+/* TreeViewPlugin */
+/* ----------------------------------------------------------------------------------------------------------*/
+
+#treeViewContainer {
+    padding-top: 25px;
+    pointer-events: all;
+    height: 100%;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    position: absolute;
+    background-color: rgba(255, 255, 255, 0.86);
+    color: black;
+    top: 0;
+    z-index: 200000;
+    float: left;
+    left: 0;
+    font-family: 'Roboto', sans-serif;
+    font-size: 15px;
+    user-select: none;
+    -ms-user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    width: 550px;
+}
+
+#treeViewContainer ul {
+    list-style: none;
+    padding-left: 1.75em;
+}
+
+#treeViewContainer ul li {
+    position: relative;
+    width: 500px;
+}
+
+#treeViewContainer ul li a {
+    background-color: #eee;
+    border-radius: 50%;
+    color: #000;
+    display: inline-block;
+    height: 1.5em;
+    left: -1.5em;
+    position: absolute;
+    text-align: center;
+    text-decoration: none;
+    width: 1.5em;
+}
+
+#treeViewContainer ul li a.plus {
+    background-color: #ded;
+}
+
+#treeViewContainer ul li a.minus {
+    background-color: #eee;
+}
+
+#treeViewContainer ul li a:active {
+    top: 1px;
+}
+
+#treeViewContainer ul li span {
+    display: inline-block;
+    width: calc(100% - 50px);
+}
+
+#treeViewContainer .highlighted-node { /* Appearance of node highlighted with TreeViewPlugin#showNode() */
+    border: black solid 1px;
+    background: yellow;
+    color: black;
+    padding-left: 1px;
+    padding-right: 5px;
+}

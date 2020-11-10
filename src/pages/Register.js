@@ -1,23 +1,69 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import {
   Grid,
-  Link,
   Typography,
   TextField,
   CircularProgress,
   Button,
 } from "@material-ui/core";
 import withStyles from "@material-ui/core/styles/withStyles";
-import styles from "../styles";
+import styles from "@styles";
+import axios from "axios";
+import AppContext from "@context";
+import {Link} from 'react-router-dom'
+import useStyles from '@styles'
 
 function Register(props) {
+  const { context, setContext } = useContext(AppContext);
+
   const [username, setUsername] = useState("jmauwerb");
   const [password, setPassword] = useState("test123");
   const [confirmPassword, setConfirmPassword] = useState("test123");
   const [email, setEmail] = useState("jmauwerb@gmail.com");
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
-  const { classes } = props;
+  const classes = useStyles();
+
+  async function submitRegistration(event) {
+    event.preventDefault();
+    try {
+      if (password !== confirmPassword) {
+        setErrors({ ...errors, passwordError: "Passwords do not match" });
+        return;
+      }
+      setLoading(true);
+
+      const details = await axios.post(`${process.env.REACT_APP_BACKEND}/register`, {
+        username,
+        password,
+        email,
+      });
+
+      setLoading(false);
+      setContext({...context, user: details.data.user, token: details.data.token})
+    } catch (error) {
+      try {
+        console.log(
+          "error.response.data.keyValue",
+          error.response.data.keyValue
+        );
+        if (error.response.data.keyValue.hasOwnProperty("email")) {
+          setErrors({
+            ...errors,
+            emailError: "An account with this email adress already exists",
+          });
+        } else if (error.response.data.keyValue.hasOwnProperty("username")) {
+          setErrors({
+            ...errors,
+            usernameError: "An account with this username already exists",
+          });
+        }
+      } catch (error) {
+        console.log("error", error);
+      }
+      setLoading(false);
+    }
+  }
 
   return (
     <div>
@@ -27,17 +73,20 @@ function Register(props) {
           <Typography variant="h2" className={classes.pageTitle}>
             Register
           </Typography>
-          <form>
+          <form onSubmit={(e) => submitRegistration(e)}>
             <TextField
               id="username"
               name="username"
               type="text"
               label="Username"
-              helperText={errors.userNameError}
-              error={errors ? true : false}
+              helperText={errors.usernameError}
+              error={errors.usernameError ? true : false}
               className={classes.textField}
               value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              onChange={(e) => {
+                setUsername(e.target.value);
+                setErrors({ ...errors, usernameError: null });
+              }}
               fullWidth
             />
             <TextField
@@ -46,10 +95,13 @@ function Register(props) {
               type="email"
               label="Email"
               helperText={errors.emailError}
-              error={errors ? true : false}
+              error={errors.emailError ? true : false}
               className={classes.textField}
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e) => {
+                setEmail(e.target.value);
+                setErrors({ ...errors, emailError: null });
+              }}
               fullWidth
             />
             <TextField
@@ -58,10 +110,13 @@ function Register(props) {
               type="password"
               label="Password"
               helperText={errors.passwordError}
-              error={errors ? true : false}
+              error={errors.passwordError ? true : false}
               className={classes.textField}
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e) => {
+                setPassword(e.target.value);
+                setErrors({ ...errors, passwordError: null });
+              }}
               fullWidth
             />
             <TextField
@@ -70,10 +125,13 @@ function Register(props) {
               type="password"
               label="Confirm Password"
               helperText={errors.passwordError}
-              error={errors ? true : false}
+              error={errors.passwordError ? true : false}
               className={classes.textField}
               value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
+              onChange={(e) => {
+                setConfirmPassword(e.target.value);
+                setErrors({ ...errors, passwordError: null });
+              }}
               fullWidth
             />
             <Button
@@ -83,7 +141,7 @@ function Register(props) {
               color="primary"
               className={classes.button}
             >
-              Sign up{" "}
+              Register
               {loading && (
                 <CircularProgress size={20} className={classes.progress} />
               )}{" "}
@@ -100,4 +158,4 @@ function Register(props) {
   );
 }
 
-export default withStyles(styles)(Register);
+export default Register;

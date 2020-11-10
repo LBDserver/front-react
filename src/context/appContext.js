@@ -1,7 +1,9 @@
 import {createContext} from 'react'
 
 export const initialState = {
- user: undefined
+ user: undefined,
+ activeGraphs: [],
+ activeDocuments: []
 }
 
 const AppContext = createContext()
