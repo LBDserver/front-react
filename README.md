@@ -12,3 +12,6 @@
 ## Startup
 * Run the command `npm start` in a terminal (in the folder where you installed this repository)
 * The application will be hosted on port 3000. You may find it at http://localhost:3000.
+
+## Initial project setup
+* Coming soon!
