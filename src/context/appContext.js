@@ -3,7 +3,8 @@ import {createContext} from 'react'
 export const initialState = {
  user: undefined,
  activeGraphs: [],
- activeDocuments: []
+ activeDocuments: [],
+ selection: []
 }
 
 const AppContext = createContext()

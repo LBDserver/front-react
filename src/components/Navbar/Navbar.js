@@ -17,8 +17,10 @@ import MoreIcon from "@material-ui/icons/MoreVert";
 import useStyles from "@styles";
 import { Link } from "react-router-dom";
 import AppContext from "@context";
-import {checkAuthentication} from '@util/functions'
+import {checkAuthentication, setConfig} from '@util/functions'
 import axios from 'axios'
+import url from 'url'
+import {parse as parseTTL} from '@frogcat/ttl2jsonld'
 
 function Navbar() {
   const classes = useStyles();
@@ -129,20 +131,30 @@ function Navbar() {
   );
 
   async function fetchProject() {
-    const config = {
-      method: 'get',
-      url: `${process.env.REACT_APP_BACKEND}/lbd/${currentProject}`
-    };
-
-    if (context.token && context.user) {
-      config.headers = { 
-        'Authorization': `Bearer ${context.token}`
-      }
-    }
-
     try {
-      const result = await axios(config)
-      setContext({...context, currentProject: result.data})
+      const result = await axios(setConfig(context, `${process.env.REACT_APP_BACKEND}/lbd/${currentProject}`))
+
+      const documents = {}
+      const graphs = {}
+
+      for (const docUrl of result.data.documents) {
+        const fullUrl = url.parse(docUrl)
+        const doc = docUrl.replace(`${fullUrl.protocol}//${fullUrl.host}`, process.env.REACT_APP_BACKEND)
+        const metaConfig = await axios(setConfig(context, `${doc}.meta`))
+        const metaJSON = parseTTL(metaConfig.data.graph)
+
+        documents[docUrl] = metaJSON
+      }
+
+      for (const graphUrl of result.data.graphs) {
+        const fullUrl = url.parse(graphUrl)
+        const graph = graphUrl.replace(`${fullUrl.protocol}//${fullUrl.host}`, process.env.REACT_APP_BACKEND)
+        const metaConfig = await axios(setConfig(context, `${graph}.meta`))
+        const metaJSON = parseTTL(metaConfig.data.graph)
+
+        graphs[graphUrl] = metaJSON
+      }
+      setContext({...context, currentProject: {projectId: currentProject, documents, graphs, projectMeta: parseTTL(result.data.projectGraph)}})
     } catch (error) {
       console.log('error', error)
       setContext({...context, currentProject: null})

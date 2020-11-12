@@ -177,29 +177,25 @@ export default class GeometryComponent extends Component {
         let entities = this.state.viewer.scene.objects
         if (this.props.queryResults && this.props.queryResults !== this.state.lastQueried) {
             let results = this.props.queryResults
-            const resultList = []
-            results.forEach((res) => {
-                resultList.push(res.guid.value)
-            })
-
             Object.keys(entities).forEach(ent => {
                 // let extension = this.props.models.split('.')
                 // extension = extension[extension.length - 1]
                 const extension = 'gltf'
                 let objectGuid
                 if (extension.toLowerCase() === 'gltf') {
-                    objectGuid = this.getGuid(entities[ent].id) }
+                    objectGuid = this.getGuid(entities[ent].id)
+                 }
                 // } else if (extension.toLowerCase() === 'xkt') {
                 //     objectGuid = entities[ent].id
                 // }
-                if (resultList.includes(objectGuid)) {
+                if (results.includes(objectGuid)) {
                     entities[ent].highlighted = true
                 } else {
                     entities[ent].highlighted = false
                 }
             })
 
-            this.setState({ lastQueried: this.props.queryResults, selection: resultList })
+            this.setState({ lastQueried: this.props.queryResults, selection: results })
         }
     }
 
@@ -213,8 +209,8 @@ export default class GeometryComponent extends Component {
 
     render() {
         return (
-            <div className="modelContainer">
-                <canvas id="myCanvas"></canvas>
+            <div className="modelContainer" style={{width: this.props.width, height: this.props.height}}>
+                <canvas id="myCanvas" style={{width: this.props.width, height: this.props.height}}></canvas>
                 <canvas className="navCube" id="myNavCubeCanvas"></canvas>
             </div>
         )

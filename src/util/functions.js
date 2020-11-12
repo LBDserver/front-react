@@ -6,4 +6,18 @@ function checkAuthentication (context) {
     }
 }
 
-export {checkAuthentication}
+const setConfig = (context, url) => {
+    const config = {
+    method: 'get',
+    url
+  };
+
+  if (context.token && context.user) {
+    config.headers = { 
+      'Authorization': `Bearer ${context.token}`
+    }
+  }
+  return config
+}
+
+export {checkAuthentication, setConfig}

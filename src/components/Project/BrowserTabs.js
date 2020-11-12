@@ -50,7 +50,7 @@ function a11yProps(index) {
 const useStyles = makeStyles((theme) => ({
   root: {
     backgroundColor: theme.palette.background.paper,
-    width: 500,
+    width: "100%",
   },
 }));
 
@@ -116,8 +116,8 @@ export default function BrowserTabs() {
         <TabPanel value={value} index={0} dir={theme.direction}>
           <FormGroup row>
             {context.currentProject &&
-            context.currentProject.documents.length > 0 ? (
-              context.currentProject.documents.map((item, i) => {
+            Object.keys(context.currentProject.documents).length > 0 ? (
+              Object.keys(context.currentProject.documents).map((item, i) => {
                 return (
                   <FormControlLabel
                     key={item}
@@ -129,7 +129,7 @@ export default function BrowserTabs() {
                         color="primary"
                       />
                     }
-                    label={item}
+                    label={`${item} (${context.currentProject.documents[item]["rdfs:label"]})`}
                   />
                 );
               })
@@ -145,7 +145,8 @@ export default function BrowserTabs() {
               style={{
                 bottom: 0,
                 marginTop: "5%",
-                left: "75%"
+                left: "70%",
+                width: '120px'
               }}
             >
               Upload
@@ -156,8 +157,8 @@ export default function BrowserTabs() {
         <TabPanel value={value} index={1} dir={theme.direction}>
           <FormGroup row>
             {context.currentProject &&
-            context.currentProject.graphs.length > 0 ? (
-              context.currentProject.graphs.map((item, i) => {
+            Object.keys(context.currentProject.graphs).length > 0 ? (
+              Object.keys(context.currentProject.graphs).map((item, i) => {
                 return (
                   <FormControlLabel
                     key={item}
@@ -185,7 +186,8 @@ export default function BrowserTabs() {
               style={{
                 bottom: 0,
                 marginTop: "5%",
-                left: "75%"
+                left: "70%",
+                width: '120px'
               }}
             >
               Upload
