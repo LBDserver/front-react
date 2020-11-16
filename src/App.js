@@ -1,4 +1,4 @@
-import { Register, Login, Project } from "./pages";
+import { Register, Login, Project, ProjectSetup } from "./pages";
 
 import { Navbar } from "@components";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
@@ -22,6 +22,7 @@ function App() {
           <Navbar />
           <Switch>
             <Route exact path="/" component={Project} />
+            <AuthRoute exact path="/projectsetup" component={ProjectSetup} />
             <NonAuthRoute exact path="/register" component={Register} />
             <NonAuthRoute exact path="/login" component={Login} />
           </Switch>

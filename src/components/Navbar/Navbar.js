@@ -25,7 +25,7 @@ import {parse as parseTTL} from '@frogcat/ttl2jsonld'
 function Navbar() {
   const classes = useStyles();
   const { context, setContext } = useContext(AppContext);
-  const [currentProject, setCurrentProject] = React.useState("cefd37ba-6866-4d5f-ab46-83816928f135")
+  const [currentProject, setCurrentProject] = React.useState("fb5fe0a7-20f3-4ac4-9471-cfe89f336e2f")
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
 
@@ -78,6 +78,9 @@ function Navbar() {
 
   const loggedIn = (
     <div>
+            <Button color="inherit" component={Link} to="/projectsetup">
+        Setup
+      </Button>
       <Button
         color="inherit"
         onClick={(e) => setContext({ ...context, user: null, token: null })}
@@ -86,6 +89,7 @@ function Navbar() {
       >
         Logout
       </Button>
+
     </div>
   );
 
@@ -166,8 +170,10 @@ function Navbar() {
     <div className={classes.grow}>
       <AppBar className={classes.appBar} position="fixed">
         <Toolbar>
-          <Typography className={classes.title} variant="h6" noWrap>
-            LBDserver
+          <Typography as={Link} to="/" className={classes.title} variant="h6" noWrap>
+          <Link to="/" variant="h6" style={{color: "white", textDecoration: "none"}} color="inherit">
+    LBDserver
+  </Link>
           </Typography>
           <div className={classes.search}>
             <div className={classes.searchIcon}>
