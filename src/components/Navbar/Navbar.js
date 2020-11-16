@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import IconButton from "@material-ui/core/IconButton";
@@ -22,12 +22,21 @@ import axios from 'axios'
 import url from 'url'
 import {parse as parseTTL} from '@frogcat/ttl2jsonld'
 
+
 function Navbar() {
   const classes = useStyles();
   const { context, setContext } = useContext(AppContext);
-  const [currentProject, setCurrentProject] = React.useState("fb5fe0a7-20f3-4ac4-9471-cfe89f336e2f")
-  const [anchorEl, setAnchorEl] = React.useState(null);
-  const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
+  const [currentProject, setCurrentProject] = useState("fb5fe0a7-20f3-4ac4-9471-cfe89f336e2f")
+
+  useEffect(() => {
+    if (context.currentProject && context.currentProject.projectId) {
+      setCurrentProject(context.currentProject.projectId)
+    }
+  }, [context.currentProject])
+
+
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState(null);
 
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);

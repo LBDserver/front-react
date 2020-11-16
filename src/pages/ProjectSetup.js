@@ -13,6 +13,7 @@ import axios from "axios";
 import AppContext from "@context";
 import { Link, Redirect } from "react-router-dom";
 import { setConfig } from "@util/functions";
+import {parse as parseTTL} from '@frogcat/ttl2jsonld'
 
 function ProjectSetup(props) {
   const classes = useStyles();
@@ -47,9 +48,11 @@ function ProjectSetup(props) {
         data: data,
       };
 
-      const results = await axios(config);
-      console.log("results.data", results.data);
+      const result = await axios(config);
+      console.log("results.data", result.data);
       setLoading(false);
+      setContext({...context, currentProject: {projectId: result.data.id, documents: [], graphs: [], projectMeta: parseTTL(result.data.projectGraph)}})
+
       setProjectCreated(true)
     } catch (error) {
       console.log("error", error);
