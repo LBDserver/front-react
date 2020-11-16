@@ -26,7 +26,7 @@ import {parse as parseTTL} from '@frogcat/ttl2jsonld'
 function Navbar() {
   const classes = useStyles();
   const { context, setContext } = useContext(AppContext);
-  const [currentProject, setCurrentProject] = useState("fb5fe0a7-20f3-4ac4-9471-cfe89f336e2f")
+  const [currentProject, setCurrentProject] = useState("f2788dc4-91c9-4bc0-b04c-b5ba84c5f209")
 
   useEffect(() => {
     if (context.currentProject && context.currentProject.projectId) {
