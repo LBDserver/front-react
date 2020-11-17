@@ -203,6 +203,7 @@ export default function BrowserTabs() {
                         onChange={handleDocumentSelected}
                         name="checkedB"
                         color="primary"
+                        checked={context.activeDocuments.includes(item)}
                       />
                     }
                     label={`${item} (${context.currentProject.documents[item]["rdfs:label"]})`}
@@ -309,6 +310,7 @@ export default function BrowserTabs() {
                         onChange={handleGraphSelected}
                         name="checkedB"
                         color="primary"
+                        checked={context.activeGraphs.includes(item)}
                       />
                     }
                     label={item}
