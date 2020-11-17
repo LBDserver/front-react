@@ -85,6 +85,22 @@ function Navbar() {
     </div>
   );
 
+  async function logout(e) {
+    const config = {
+      method: 'post',
+      url: `${process.env.REACT_APP_BACKEND}/logout`,
+      headers: {
+        'Authorization': `Bearer ${context.token}`
+      }
+    }
+    console.log('config', config)
+
+    const result = await axios(config)
+    console.log('result', result)
+
+    setContext({ ...context, user: null, token: null })
+  }
+
   const loggedIn = (
     <div>
             <Button color="inherit" component={Link} to="/projectsetup">
@@ -92,7 +108,7 @@ function Navbar() {
       </Button>
       <Button
         color="inherit"
-        onClick={(e) => setContext({ ...context, user: null, token: null })}
+        onClick={logout}
         component={Link}
         to="/"
       >
