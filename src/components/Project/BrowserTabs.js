@@ -2,7 +2,7 @@ import React, { useContext, useState } from "react";
 import PropTypes from "prop-types";
 import SwipeableViews from "react-swipeable-views";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
-import axios from "axios"
+import axios from "axios";
 import AppBar from "@material-ui/core/AppBar";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
@@ -68,7 +68,9 @@ export default function BrowserTabs() {
   const theme = useTheme();
   const [value, setValue] = useState(0);
   const [openDialog, setOpenDialog] = useState(false);
-  const [fileToUpload, setFileToUpload] = useState([]);
+  const [fileToUpload, setFileToUpload] = useState();
+  const [label, setLabel] = useState("gltf");
+  const [description, setDescription] = useState("test");
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -105,16 +107,51 @@ export default function BrowserTabs() {
 
   function handleInput(e) {
     e.preventDefault();
-    setFileToUpload(e.target.files);
+    setFileToUpload(e.target.files[0]);
     console.log("e.target.files", e.target.files);
   }
 
-  function uploadInput(e, docType) {
+  async function uploadInput(e, docType) {
     e.preventDefault();
     try {
-      console.log("uploading", docType);
+      let url;
+      const bodyFormData = new FormData();
 
+      switch (docType) {
+        case "document":
+          url = `${process.env.REACT_APP_BACKEND}/lbd/${context.currentProject.projectId}/files`;
+          bodyFormData.append("file", fileToUpload);
 
+          break;
+        case "graph":
+          url = `${process.env.REACT_APP_BACKEND}/lbd/${context.currentProject.projectId}/graphs`;
+          bodyFormData.append("graph", fileToUpload);
+
+          break;
+        default:
+          break;
+      }
+      bodyFormData.append("label", label);
+      bodyFormData.append("description", description);
+
+      for (const pair of bodyFormData.entries()) {
+        console.log("pair", pair);
+      }
+
+      const options = {
+        method: "post",
+        url,
+        data: bodyFormData,
+        headers: {
+          Authorization: `Bearer ${context.token}`,
+          "Content-Type": `multipart/form-data; boundary=${bodyFormData._boundary}`,
+        },
+      };
+
+      console.log("options", options);
+      const result = await axios(options);
+      console.log("result", result);
+      handleCloseDialog(false);
     } catch (error) {
       console.log("error", error);
       handleCloseDialog(false);
@@ -127,6 +164,9 @@ export default function BrowserTabs() {
 
   const handleCloseDialog = () => {
     setOpenDialog(false);
+    setLabel("");
+    setDescription("");
+    setFileToUpload("");
   };
 
   return (
@@ -173,77 +213,86 @@ export default function BrowserTabs() {
               <p>There are no documents in this project yet</p>
             )}
           </FormGroup>
-          <Button
-            onClick={handleOpenDialog}
-            variant="contained"
-            color="secondary"
-            component="span"
-            startIcon={<CloudUploadIcon fontSize="large" />}
-            style={{
-              bottom: 0,
-              marginTop: "5%",
-              left: "70%",
-              width: "120px",
-            }}
-          >
-            Upload
-          </Button>
-          <Dialog
-            open={openDialog}
-            onClose={handleCloseDialog}
-            aria-labelledby="form-dialog-title"
-          >
-            <DialogTitle id="form-dialog-title">
-              Upload non-RDF documents
-            </DialogTitle>
-            <DialogContent>
-              <DialogContentText>
-                Upload a document to the current project
-              </DialogContentText>
-              <TextField
-                autoFocus
-                margin="dense"
-                id="name"
-                label="Label"
-                fullWidth
-              />
-              <TextField
-                autoFocus
-                margin="dense"
-                id="name"
-                label="Description"
-                fullWidth
-              />
-            </DialogContent>
-            <input
-              display="none"
-              className={classes.input}
-              id="contained-button-file"
-              multiple
-              type="file"
-              accept=".ttl, .rdf, .jsonld"
-              onChange={handleInput}
-              style={{
-                margin: "20px",
-                marginTop: "20px",
-              }}
-            />
-            <DialogActions>
-              <Button onClick={handleCloseDialog} color="primary">
-                Cancel
-              </Button>
+          {context.user ? (
+            <div>
               <Button
-                onClick={(e) => uploadInput(e, "document")}
+                onClick={handleOpenDialog}
                 variant="contained"
                 color="secondary"
                 component="span"
                 startIcon={<CloudUploadIcon fontSize="large" />}
-                disabled={!fileToUpload.length}
+                style={{
+                  bottom: 0,
+                  marginTop: "5%",
+                  left: "70%",
+                  width: "120px",
+                }}
               >
                 Upload
               </Button>
-            </DialogActions>
-          </Dialog>
+              <Dialog
+                open={openDialog}
+                onClose={handleCloseDialog}
+                aria-labelledby="form-dialog-title"
+              >
+                <DialogTitle id="form-dialog-title">
+                  Upload non-RDF documents
+                </DialogTitle>
+                <DialogContent>
+                  <DialogContentText>
+                    Upload a document to the current project
+                  </DialogContentText>
+                  <TextField
+                    autoFocus
+                    margin="dense"
+                    id="label"
+                    label="Label"
+                    value={label}
+                    onChange={(e) => setLabel(e.target.value)}
+                    fullWidth
+                  />
+                  <TextField
+                    autoFocus
+                    margin="dense"
+                    id="description"
+                    onChange={(e) => setDescription(e.target.value)}
+                    value={description}
+                    label="Description"
+                    fullWidth
+                  />
+                </DialogContent>
+                <input
+                  display="none"
+                  className={classes.input}
+                  id="contained-button-file"
+                  multiple
+                  type="file"
+                  onChange={handleInput}
+                  style={{
+                    margin: "20px",
+                    marginTop: "20px",
+                  }}
+                />
+                <DialogActions>
+                  <Button onClick={handleCloseDialog} color="primary">
+                    Cancel
+                  </Button>
+                  <Button
+                    onClick={(e) => uploadInput(e, "document")}
+                    variant="contained"
+                    color="secondary"
+                    component="span"
+                    startIcon={<CloudUploadIcon fontSize="large" />}
+                    disabled={!fileToUpload}
+                  >
+                    Upload
+                  </Button>
+                </DialogActions>
+              </Dialog>
+            </div>
+          ) : (
+            <div></div>
+          )}
         </TabPanel>
 
         <TabPanel value={value} index={1} dir={theme.direction}>
@@ -270,20 +319,87 @@ export default function BrowserTabs() {
               <p>There are no graphs in this project yet</p>
             )}
           </FormGroup>
-          <Button
-            variant="contained"
-            color="secondary"
-            component="span"
-            startIcon={<CloudUploadIcon fontSize="large" />}
-            style={{
-              bottom: 0,
-              marginTop: "5%",
-              left: "70%",
-              width: "120px",
-            }}
-          >
-            Upload
-          </Button>
+          {context.user ? (
+            <div>
+              <Button
+                onClick={handleOpenDialog}
+                variant="contained"
+                color="secondary"
+                component="span"
+                startIcon={<CloudUploadIcon fontSize="large" />}
+                style={{
+                  bottom: 0,
+                  marginTop: "5%",
+                  left: "70%",
+                  width: "120px",
+                }}
+              >
+                Upload
+              </Button>
+              <Dialog
+                open={openDialog}
+                onClose={handleCloseDialog}
+                aria-labelledby="form-dialog-title"
+              >
+                <DialogTitle id="form-dialog-title">
+                  Upload RDF graphs
+                </DialogTitle>
+                <DialogContent>
+                  <DialogContentText>
+                    Upload an RDF graph to the current project
+                  </DialogContentText>
+                  <TextField
+                    autoFocus
+                    margin="dense"
+                    id="label"
+                    label="Label"
+                    value={label}
+                    onChange={(e) => setLabel(e.target.value)}
+                    fullWidth
+                  />
+                  <TextField
+                    autoFocus
+                    margin="dense"
+                    id="description"
+                    onChange={(e) => setDescription(e.target.value)}
+                    value={description}
+                    label="Description"
+                    fullWidth
+                  />
+                </DialogContent>
+                <input
+                  display="none"
+                  className={classes.input}
+                  id="contained-button-file"
+                  multiple
+                  accept=".ttl, .rdf"
+                  type="file"
+                  onChange={handleInput}
+                  style={{
+                    margin: "20px",
+                    marginTop: "20px",
+                  }}
+                />
+                <DialogActions>
+                  <Button onClick={handleCloseDialog} color="primary">
+                    Cancel
+                  </Button>
+                  <Button
+                    onClick={(e) => uploadInput(e, "graph")}
+                    variant="contained"
+                    color="secondary"
+                    component="span"
+                    startIcon={<CloudUploadIcon fontSize="large" />}
+                    disabled={!fileToUpload}
+                  >
+                    Upload
+                  </Button>
+                </DialogActions>
+              </Dialog>
+            </div>
+          ) : (
+            <div></div>
+          )}
         </TabPanel>
       </SwipeableViews>
     </div>
