@@ -14,8 +14,8 @@ import {Link} from 'react-router-dom'
 function Login(props) {
   const classes = useStyles()
     const {context, setContext} = useContext(AppContext)
-  const [password, setPassword] = useState("test123");
-  const [email, setEmail] = useState("jeroen.werbrouck@hotmail.com");
+  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("");
   const [loginError, setLoginError] = useState();
   const [loading, setLoading] = useState(false);
 

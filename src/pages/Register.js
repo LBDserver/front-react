@@ -16,10 +16,10 @@ import useStyles from '@styles'
 function Register(props) {
   const { context, setContext } = useContext(AppContext);
 
-  const [username, setUsername] = useState("jmauwerb");
-  const [password, setPassword] = useState("test123");
-  const [confirmPassword, setConfirmPassword] = useState("test123");
-  const [email, setEmail] = useState("jmauwerb@gmail.com");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [email, setEmail] = useState("");
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const classes = useStyles();
