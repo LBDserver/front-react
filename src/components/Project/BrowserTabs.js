@@ -14,13 +14,14 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Switch from "@material-ui/core/Switch";
 import Button from "@material-ui/core/Button";
 import CloudUploadIcon from "@material-ui/icons/CloudUpload";
-
+import {CircularProgress} from "@material-ui/core"
 import TextField from "@material-ui/core/TextField";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
+import {parse as parseTTL} from '@frogcat/ttl2jsonld'
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -71,6 +72,7 @@ export default function BrowserTabs() {
   const [fileToUpload, setFileToUpload] = useState();
   const [label, setLabel] = useState("gltf");
   const [description, setDescription] = useState("test");
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -113,18 +115,19 @@ export default function BrowserTabs() {
 
   async function uploadInput(e, docType) {
     e.preventDefault();
+    setLoading(true);
     try {
-      let url;
+      let uploadUrl;
       const bodyFormData = new FormData();
 
       switch (docType) {
         case "document":
-          url = `${process.env.REACT_APP_BACKEND}/lbd/${context.currentProject.projectId}/files`;
+          uploadUrl = `${process.env.REACT_APP_BACKEND}/lbd/${context.currentProject.projectId}/files`;
           bodyFormData.append("file", fileToUpload);
 
           break;
         case "graph":
-          url = `${process.env.REACT_APP_BACKEND}/lbd/${context.currentProject.projectId}/graphs`;
+          uploadUrl = `${process.env.REACT_APP_BACKEND}/lbd/${context.currentProject.projectId}/graphs`;
           bodyFormData.append("graph", fileToUpload);
 
           break;
@@ -134,13 +137,9 @@ export default function BrowserTabs() {
       bodyFormData.append("label", label);
       bodyFormData.append("description", description);
 
-      for (const pair of bodyFormData.entries()) {
-        console.log("pair", pair);
-      }
-
       const options = {
         method: "post",
-        url,
+        url: uploadUrl,
         data: bodyFormData,
         headers: {
           Authorization: `Bearer ${context.token}`,
@@ -150,7 +149,43 @@ export default function BrowserTabs() {
 
       console.log("options", options);
       const result = await axios(options);
-      console.log("result", result);
+
+      console.log("result", result.data);
+
+      let currentProject
+      switch (docType) {
+        case "document":
+          currentProject = context.currentProject
+          console.log('currentProject', currentProject)
+          currentProject["documents"][result.data.url] = parseTTL(result.data.metaGraph)
+          setContext({...context, currentProject})
+          break;
+        case "graph":
+          currentProject = context.currentProject
+          currentProject["graphs"][result.data.url] = parseTTL(result.data.metaGraph)
+          setContext({...context, currentProject})
+          break;
+        default:
+          break;
+      }
+      // let metaUrl = url.parse(result.data.url);
+      // metaUrl = result.data.url.replace(
+      //   `${metaUrl.protocol}//${metaUrl.host}`,
+      //   process.env.REACT_APP_BACKEND
+      // );
+
+      // const getMetaOptions = {
+      //   method: "get",
+      //   url: `${metaUrl}.meta`,
+      //   headers: {
+      //     Authorization: `Bearer ${context.token}`,
+      //   },
+      // };
+
+      // const metaResult = await axios(getMetaOptions);
+      // console.log("metaResult", metaResult);
+      console.log('context', context)
+      setLoading(false);
       handleCloseDialog(false);
     } catch (error) {
       console.log("error", error);
@@ -284,9 +319,15 @@ export default function BrowserTabs() {
                     color="secondary"
                     component="span"
                     startIcon={<CloudUploadIcon fontSize="large" />}
-                    disabled={!fileToUpload}
+                    disabled={!fileToUpload || loading}
                   >
                     Upload
+                    {loading && (
+                      <CircularProgress
+                        size={20}
+                        className={classes.progress}
+                      />
+                    )}{" "}
                   </Button>
                 </DialogActions>
               </Dialog>
@@ -392,9 +433,15 @@ export default function BrowserTabs() {
                     color="secondary"
                     component="span"
                     startIcon={<CloudUploadIcon fontSize="large" />}
-                    disabled={!fileToUpload}
+                    disabled={!fileToUpload || loading}
                   >
                     Upload
+                    {loading && (
+                      <CircularProgress
+                        size={20}
+                        className={classes.progress}
+                      />
+                    )}{" "}
                   </Button>
                 </DialogActions>
               </Dialog>
