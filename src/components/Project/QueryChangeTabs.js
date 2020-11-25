@@ -9,6 +9,7 @@ import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
 import AppContext from "@context"
 import QuerySparql from './QuerySparql';
+import PluginComponent from '../plugins'
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -74,10 +75,15 @@ export default function QueryChangeTabs() {
           variant="fullWidth"
           aria-label="full width tabs example"
         >
-          <Tab label="Query" {...a11yProps(0)} />
+          {(context.activeGraphs.length === 1) ? (
+            <Tab label="Plugins" {...a11yProps(0)} />
+        ) : (
+          <div></div>
+        )}
+                  <Tab label="Query" {...a11yProps(1)} />
+
           {(context.activeGraphs.length === 1) ? (
             <Tab label="Turtle" {...a11yProps(1)} />
-
         ) : (
           <div></div>
         )}
@@ -88,11 +94,19 @@ export default function QueryChangeTabs() {
         index={value}
         onChangeIndex={handleChangeIndex}
       >
+                {(context.activeGraphs.length === 1) ? (
         <TabPanel value={value} index={0} dir={theme.direction}>
+        <PluginComponent/>
+      </TabPanel>
+        ) : (
+            <div></div>
+        )}
+        <TabPanel value={value} index={1} dir={theme.direction}>
           <QuerySparql/>
         </TabPanel>
-        {(context.activeGraphs.length === 1) ? (
-        <TabPanel value={value} index={1} dir={theme.direction}>
+
+                {(context.activeGraphs.length === 1) ? (
+        <TabPanel value={value} index={2} dir={theme.direction}>
         TBD: direct turtle adaptations
       </TabPanel>
         ) : (

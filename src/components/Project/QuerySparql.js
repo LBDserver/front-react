@@ -30,7 +30,7 @@ function QuerySparql() {
                 selection.push(binding.guid.value)
             })
             console.log('selection', selection)
-            setContext({...context, selection})
+            setContext({...context, querySelection: selection})
         } catch (error) {
             console.log('error', error)
         }

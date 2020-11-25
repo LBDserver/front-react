@@ -18,12 +18,10 @@ import { ProjectBrowser } from "@components";
 function Project(props) {
   const { context, setContext } = useContext(AppContext);
   const { classes } = props;
-  console.log("context", context);
 
   function checkGLTFselection() {
     const gltfChecked = []
     context.activeDocuments.forEach((doc) => {
-      console.log(context.currentProject.documents[doc]["rdfs:label"]);
       if (context.currentProject.documents[doc]["rdfs:label"] === "gltf") {
         gltfChecked.push(true)
       } else {
