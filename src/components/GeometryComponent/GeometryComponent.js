@@ -114,7 +114,6 @@ export default class GeometryComponent extends Component {
         });
 
         viewer.cameraControl.on("pickedNothing", () => {
-            console.log('pickedNothing')
             let entities = this.state.viewer.scene.objects
             Object.keys(entities).forEach(ent => {
                 entities[ent].highlighted = false

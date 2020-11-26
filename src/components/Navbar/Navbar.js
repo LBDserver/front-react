@@ -26,7 +26,7 @@ import {parse as parseTTL} from '@frogcat/ttl2jsonld'
 function Navbar() {
   const classes = useStyles();
   const { context, setContext } = useContext(AppContext);
-  const [currentProject, setCurrentProject] = useState("4cc64109-bd4c-44ed-9a50-d3c005abf001") // gravensteen
+  const [currentProject, setCurrentProject] = useState("6a4f8e46-80ff-4b8f-a29e-255f1004d8cb") // gravensteen
   // const [currentProject, setCurrentProject] = useState("24d63829-a2a7-402e-8509-76c703193388") // duplex
 
   useEffect(() => {
@@ -184,9 +184,11 @@ function Navbar() {
 
         graphs[graphUrl] = metaJSON
       }
-      setContext({...context, currentProject: {projectId: currentProject, documents, graphs, projectMeta: parseTTL(result.data.projectGraph)}})
+
+      const projectToSet = {projectId: currentProject, documents, graphs, projectMeta: parseTTL(result.data.projectGraph)}
+      setContext({...context, currentProject: projectToSet, activeDocuments: [], activeGraphs: []})
     } catch (error) {
-      console.log('error', error)
+      console.log('error', error.message)
       setContext({...context, currentProject: null})
 
     }

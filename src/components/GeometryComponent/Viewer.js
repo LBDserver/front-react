@@ -14,7 +14,6 @@ function Viewer(props) {
     // const gltfChecked = ["https://jwerbrouck.inrupt.net/public/myProjects/gravensteen/model.txt"]
     const gltfChecked = []
     context.activeDocuments.forEach((doc) => {
-      console.log(context.currentProject.documents[doc]["rdfs:label"]);
       if (context.currentProject.documents[doc]["rdfs:label"] === "gltf") {
         const fullUrl = url.parse(doc)
         const realDocUrl = doc.replace(`${fullUrl.protocol}//${fullUrl.host}`, process.env.REACT_APP_BACKEND)
@@ -26,7 +25,7 @@ function Viewer(props) {
   }  
 
   function setSelection(guid) {
-    setContext({...context, selection: [guid]})
+    setContext({...context, selection: guid})
   }
 
   return (

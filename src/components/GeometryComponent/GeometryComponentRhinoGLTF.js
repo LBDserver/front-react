@@ -109,7 +109,6 @@ export default class GeometryComponent extends Component {
             if (!lastEntityColorize || pickResult.entity.id !== lastEntityColorize.id) {
                 if (pickResult.entity) {
                     try {
-                        console.log('pickResult.entity.id', pickResult.entity.id)
                         pickResult.entity.highlighted = 1
                         let ifcGuid
                         if (extension.toLowerCase() === 'gltf') {
@@ -153,7 +152,6 @@ export default class GeometryComponent extends Component {
         });
 
         viewer.cameraControl.on("pickedNothing", () => {
-            console.log('pickedNothing')
             let entities = this.state.viewer.scene.objects
             Object.keys(entities).forEach(ent => {
                 entities[ent].highlighted = false
@@ -223,7 +221,12 @@ export default class GeometryComponent extends Component {
                 const extension = 'gltf'
                 let objectGuid
                 if (extension.toLowerCase() === 'gltf') {
-                    objectGuid = this.getGuid(entities[ent].id)
+                    // in case of ifc
+                    // objectGuid = this.getGuid(entities[ent].id)
+
+                    // in case of stg
+                    objectGuid = entities[ent].id
+                    console.log('objectGuid', objectGuid)
                 }
                 // } else if (extension.toLowerCase() === 'xkt') {
                 //     objectGuid = entities[ent].id

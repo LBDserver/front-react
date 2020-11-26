@@ -9,6 +9,19 @@ const initialQuery = `PREFIX props: <https://w3id.org/props#>
 PREFIX bot: <https://w3id.org/bot#>
 PREFIX beo: <https://pi.pauwel.be/voc/buildingelement#>
 PREFIX schema: <http://schema.org/>
+PREFIX omg: <https://w3id.org/omg#>
+PREFIX fog: <https://w3id.org/fog#>
+SELECT ?s ?guid
+WHERE {
+    ?s a beo:Column; 
+        omg:hasGeometry/fog:hasGltfId ?guid .
+        # props:globalIdIfcRoot/schema:value ?guid .
+}`;
+
+const initialQueryIfc = `PREFIX props: <https://w3id.org/props#>
+PREFIX bot: <https://w3id.org/bot#>
+PREFIX beo: <https://pi.pauwel.be/voc/buildingelement#>
+PREFIX schema: <http://schema.org/>
 SELECT ?s ?guid
 WHERE {
     ?s a beo:Window; 
@@ -24,9 +37,11 @@ function QuerySparql() {
             const newQuery = await adaptQuery()
             const url = `${process.env.REACT_APP_BACKEND}/lbd/${context.currentProject.projectId}?query=${newQuery}`
             const results = await axios(setConfig(context, url))
+            console.log('test')
 
             const selection = []
             results.data.results.results.bindings.forEach((binding) => {
+              console.log('binding', binding)
                 selection.push(binding.guid.value)
             })
             console.log('selection', selection)
