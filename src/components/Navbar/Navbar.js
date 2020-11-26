@@ -26,8 +26,8 @@ import {parse as parseTTL} from '@frogcat/ttl2jsonld'
 function Navbar() {
   const classes = useStyles();
   const { context, setContext } = useContext(AppContext);
-  const [currentProject, setCurrentProject] = useState("6a4f8e46-80ff-4b8f-a29e-255f1004d8cb") // gravensteen
-  // const [currentProject, setCurrentProject] = useState("24d63829-a2a7-402e-8509-76c703193388") // duplex
+  const [currentProject, setCurrentProject] = useState("c1263a46-135b-459e-b197-338f0f52ca0c") // gravensteen
+  // const [currentProject, setCurrentProject] = useState("20458d95-fc25-4137-8feb-614db5e6b3aa") // duplex
 
   useEffect(() => {
     if (context.currentProject && context.currentProject.projectId) {

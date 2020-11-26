@@ -116,28 +116,28 @@ export default class GeometryComponent extends Component {
                         } else if (extension.toLowerCase() === 'xkt') {
                             ifcGuid = pickResult.entity.id
                         }
-        
+
                         // if (lastEntityColorize) {
                         //     lastEntityColorize.colorize = lastColorize;
                         // }
-        
+
                         let entities = this.state.viewer.scene.objects
                         Object.keys(entities).forEach(ent => {
                             if (entities[ent].id !== pickResult.entity.id) {
                                 entities[ent].highlighted = false
                             }
                         })
-        
-                        if (ifcGuid === "0000000000000000000000") {
-                        // this.setState({ selection: [pickResult.entity.id] })
 
-                        this.props.selectionHandler([pickResult.entity.id])
+                        if (ifcGuid === "0000000000000000000000") {
+                            // this.setState({ selection: [pickResult.entity.id] })
+
+                            this.props.selectionHandler([pickResult.entity.id])
                         } else {
-                        // this.setState({ selection: [pickResult.entity.id] })
-                        this.props.selectionHandler([ifcGuid])
+                            // this.setState({ selection: [pickResult.entity.id] })
+                            this.props.selectionHandler([ifcGuid])
                         }
 
-                         
+
                     } catch (error) {
                         this.setState({ selection: [] })
 
@@ -215,6 +215,7 @@ export default class GeometryComponent extends Component {
         let entities = this.state.viewer.scene.objects
         if (this.props.queryResults && this.props.queryResults !== this.state.lastQueried) {
             let results = this.props.queryResults
+            console.log('results', results)
             Object.keys(entities).forEach(ent => {
                 // let extension = this.props.models.split('.')
                 // extension = extension[extension.length - 1]
@@ -222,11 +223,13 @@ export default class GeometryComponent extends Component {
                 let objectGuid
                 if (extension.toLowerCase() === 'gltf') {
                     // in case of ifc
-                    // objectGuid = this.getGuid(entities[ent].id)
+                    objectGuid = this.getGuid(entities[ent].id)
+                    if (objectGuid === "0000000000000000000000") {
+                        objectGuid = entities[ent].id
+                    }
 
                     // in case of stg
-                    objectGuid = entities[ent].id
-                    console.log('objectGuid', objectGuid)
+                    // console.log('objectGuid', objectGuid)
                 }
                 // } else if (extension.toLowerCase() === 'xkt') {
                 //     objectGuid = entities[ent].id
