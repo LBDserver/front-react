@@ -25,6 +25,7 @@ function Viewer(props) {
   }  
 
   function setSelection(guid) {
+    console.log('guid', guid)
     setContext({...context, selection: guid})
   }
 
