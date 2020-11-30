@@ -1,10 +1,11 @@
 import React, { useState, useContext, useEffect } from 'react'
 import AppContext from '@context'
-import { setConfig, queryComunica } from '@util/functions'
+import { setConfig, queryComunica, executeUpdate, adaptQuery, executeQuery} from '@util/functions'
 import axios from 'axios'
 import url from 'url'
 import { v4 } from "uuid"
-import { Select, MenuItem, FormControl, InputLabel } from '@material-ui/core'
+import { Select, MenuItem, FormControl, InputLabel, Button } from '@material-ui/core'
+import AddCircleIcon from '@material-ui/icons/AddCircle';
 import { makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme) => ({
@@ -205,12 +206,21 @@ function ClassificationPlugin() {
 
                                 </Select>
                             </FormControl>
-                            <button
-                                onClick={addClassification}
-                                disabled={!selectedClassification.length}
-                            >
-                                Add
-                                            </button>
+                            <Button
+                                    variant="contained"
+                                    color="secondary"
+                                    startIcon={<AddCircleIcon fontSize="large" />}
+                                    style={{
+                                        bottom: 0,
+                                        marginTop: "3%",
+                                        left: "5%",
+                                        width: '80px'
+                                    }}
+                                    onClick={addClassification}
+                                    disabled={!selectedClassification.length}
+                                >
+                                    Add
+                                </Button>
                         </div>
 
                     ) : (
@@ -241,76 +251,7 @@ function ClassificationPlugin() {
                     <div>Please select an element in the viewer</div>
                 )}
         </div>
-
     )
-}
-
-async function executeUpdate(query, context, graph) {
-    return new Promise(async (resolve, reject) => {
-        try {
-
-            const fullUrl = url.parse(graph)
-            const realGraphUrl = graph.replace(`${fullUrl.protocol}//${fullUrl.host}`, process.env.REACT_APP_BACKEND) + `?update=${encodeURIComponent(query)}`
-    
-            const config = {
-                method: 'post',
-                url: realGraphUrl
-            };
-    
-            if (context.token && context.user) {
-                config.headers = {
-                    'Authorization': `Bearer ${context.token}`
-                }
-            }
-    
-            const results = await axios(config)
-            resolve(results)
-        } catch (error) {
-            console.log('error', error)
-            reject(error)
-        }
-    })
-}
-
-function executeQuery(query, context) {
-    return new Promise(async (resolve, reject) => {
-        try {
-            const newQuery = await adaptQuery(query, context.activeGraphs)
-            const url = `${process.env.REACT_APP_BACKEND}/lbd/${context.currentProject.projectId}?query=${newQuery}`
-            const results = await axios(setConfig(context, url))
-            const selection = []
-            results.data.results.results.bindings.forEach((binding) => {
-                selection.push(binding)
-            })
-    
-            resolve(selection)
-    
-        } catch (error) {
-            console.log('query', query)
-            reject(error)
-        }
-    })
-
-}
-
-function adaptQuery(query, graphs) {
-    return new Promise((resolve, reject) => {
-        try {
-            let splitQuery = query.split('where')
-            if (splitQuery.length <= 1) {
-                splitQuery = query.split('WHERE')
-            }
-
-            graphs.forEach(graph => {
-                splitQuery[0] = splitQuery[0] + `FROM <${graph}> `
-            })
-
-            let newQuery = splitQuery[0] + "WHERE" + splitQuery[1]
-            resolve(encodeURIComponent(newQuery))
-        } catch (error) {
-            reject(error)
-        }
-    })
 }
 
 export default ClassificationPlugin

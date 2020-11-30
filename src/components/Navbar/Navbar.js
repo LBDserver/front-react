@@ -186,6 +186,7 @@ function Navbar() {
       }
 
       const projectToSet = {projectId: currentProject, documents, graphs, projectMeta: parseTTL(result.data.projectGraph)}
+      console.log('projectToSet', projectToSet)
       setContext({...context, currentProject: projectToSet, activeDocuments: [], activeGraphs: []})
     } catch (error) {
       console.log('error', error.message)
