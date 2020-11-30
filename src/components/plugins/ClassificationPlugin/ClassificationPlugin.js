@@ -4,9 +4,10 @@ import { setConfig, queryComunica, executeUpdate, adaptQuery, executeQuery} from
 import axios from 'axios'
 import url from 'url'
 import { v4 } from "uuid"
-import { Select, MenuItem, FormControl, InputLabel, Button } from '@material-ui/core'
+import { Select, MenuItem, FormControl, InputLabel, Button, TextField } from '@material-ui/core'
 import AddCircleIcon from '@material-ui/icons/AddCircle';
 import { makeStyles } from '@material-ui/core/styles';
+import Autocomplete from '@material-ui/lab/Autocomplete';
 
 const useStyles = makeStyles((theme) => ({
     formControl: {
@@ -153,11 +154,16 @@ function ClassificationPlugin() {
         }
     }
 
-    const handleChange = (e) => {
-        e.preventDefault()
-        if (e.target.value.length > 0) {
-            setSelectedClassification(e.target.value)
+    const handleChange = (value) => {
+        try {
+            new URL(value)
+            console.log('selection is valid URI')
+            setSelectedClassification(value)
+
+        } catch (error) {
+            console.log('error', error)
         }
+        
     }
 
     async function establishParent(e) {
@@ -185,6 +191,21 @@ function ClassificationPlugin() {
             console.log('error', error)
         }
     }
+
+    const classificationDropdown = () => {
+        return (
+                <FormControl>
+                <Autocomplete
+                    id="combo-box-demo"
+                    options={classificationOptions}
+                    getOptionLabel={(option) => option}
+                    style={{ width: 300, marginTop: "20px" }}
+                    onInputChange={(e, value) => handleChange(value)}
+                    renderInput={(params) => <TextField {...params} label="Set classification" variant="outlined" />}
+                />
+                </FormControl>
+        )
+    }
     // display the option for new classifications
 
     return (
@@ -194,7 +215,7 @@ function ClassificationPlugin() {
                     {(parentElement) ? (
                         <div>
                             {/* {parentElement} */}
-                            <FormControl className={classes.formControl}>
+                            {/* <FormControl className={classes.formControl}>
                                 <InputLabel id="demo-simple-select-label">New classification</InputLabel>
                                 <Select
                                     labelId="demo-simple-select-label"
@@ -205,7 +226,8 @@ function ClassificationPlugin() {
                                     {classificationOptions.map((item) => <MenuItem value={item}>{item}</MenuItem>)}
 
                                 </Select>
-                            </FormControl>
+                            </FormControl> */}
+                            {classificationDropdown()}
                             <Button
                                     variant="contained"
                                     color="secondary"
@@ -234,7 +256,7 @@ function ClassificationPlugin() {
                         )}
                     {(classifications.length > 0) ? (
                         <div>
-                            {classifications.map((item) => <p key={item}>{item}</p>)}
+                            {classifications.map((item) => <a target="_blank" href={item} key={item}>{item}</a>)}
                         </div>
                     ) : (
                             <div>
