@@ -22,3 +22,8 @@
 * (temporary) if you give a file the label 'gltf', the app will try to visualise it in the viewer upon selection. Not crash-proof yet for files that are labeled gltf but are actually another filetype.
 * You can now query the project and visualise your sparql query by (1) selecting the gltf file ("DOCUMENTS"), and then select the named graph ("GRAPHS"). A SPARQL editor will pop up, enabling you to visualise certain elements. The default query gives an indication how a guid is linked to an element. The "?guid" parameter is hardcoded in order to visualise the results.
 * By default, unauthenticated agents have read access (you can change this at setup or later). So the guid of your active project can actually be used by other people to read project data. If you store it for later use, or you're comfortable using MongoDB or GraphDB GUIs. 
+
+## End result
+If all goes well, you should be able to end up with an interactive 3D environment like the one below:
+
+![screenshot](img/screenshot.png "Screenshot of working interface for the TU Eindhoven Atlas building")
