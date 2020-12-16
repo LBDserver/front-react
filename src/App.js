@@ -1,4 +1,4 @@
-import { Register, Login, Project, ProjectSetup } from "./pages";
+import { Register, Login, Project, ProjectSetup, Home } from "./pages";
 
 import { Navbar } from "@components";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
@@ -19,23 +19,13 @@ const theme = createMuiTheme(themeFile);
 function App() {
   const [context, setContext] = useState(initialState);
 
-  useEffect(async () => {
+  useEffect(() => {
     try {
-      // const details = await axios.post(`${process.env.REACT_APP_BACKEND}/login`, {}, {
-      //     auth: {
-      //         username: "jeroen.werbrouck@hotmail.com",
-      //         password: "test123"
-      //     }
-      // });
-      // setContext({...context, user: details.data.user, token: details.data.token})
-
       const myEngine = newEngine();
-      setContext({...context, comunica: myEngine})
-      
+      setContext({...context, comunica: myEngine})   
     } catch (error) {
       console.log('error', error)
     }
-
   }, [])
 
 
@@ -45,7 +35,8 @@ function App() {
         <Router>
           <Navbar />
           <Switch>
-            <Route exact path="/" component={Project} />
+            <Route exact path="/" component={Home} />
+            <Route exact path="/project" component={Project} />
             <AuthRoute exact path="/projectsetup" component={ProjectSetup} />
             <NonAuthRoute exact path="/register" component={Register} />
             <NonAuthRoute exact path="/login" component={Login} />

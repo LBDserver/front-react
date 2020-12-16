@@ -36,130 +36,6 @@ function Navbar() {
   }, [context.currentProject])
 
 
-  const [anchorEl, setAnchorEl] = useState(null);
-  const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState(null);
-
-  const isMenuOpen = Boolean(anchorEl);
-  const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
-
-  const handleProfileMenuOpen = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleMobileMenuClose = () => {
-    setMobileMoreAnchorEl(null);
-  };
-
-  const handleMenuClose = () => {
-    setAnchorEl(null);
-    handleMobileMenuClose();
-  };
-
-  const handleMobileMenuOpen = (event) => {
-    setMobileMoreAnchorEl(event.currentTarget);
-  };
-
-  const menuId = "primary-search-account-menu";
-  const renderMenu = (
-    <Menu
-      anchorEl={anchorEl}
-      anchorOrigin={{ vertical: "top", horizontal: "right" }}
-      id={menuId}
-      keepMounted
-      transformOrigin={{ vertical: "top", horizontal: "right" }}
-      open={isMenuOpen}
-      onClose={handleMenuClose}
-    >
-      <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-      <MenuItem onClick={handleMenuClose}>My account</MenuItem>
-    </Menu>
-  );
-
-  const notLoggedIn = (
-    <div>
-      <Button color="inherit" component={Link} to="/login">
-        Login
-      </Button>
-      <Button color="inherit" component={Link} to="/register">
-        Register
-      </Button>
-    </div>
-  );
-
-  async function logout(e) {
-    const config = {
-      method: 'post',
-      url: `${process.env.REACT_APP_BACKEND}/logout`,
-      headers: {
-        'Authorization': `Bearer ${context.token}`
-      }
-    }
-    console.log('config', config)
-
-    const result = await axios(config)
-    console.log('result', result)
-
-    setContext({ ...context, user: null, token: null })
-  }
-
-  const loggedIn = (
-    <div>
-            <Button color="inherit" component={Link} to="/projectsetup">
-        Setup
-      </Button>
-      <Button
-        color="inherit"
-        onClick={logout}
-        component={Link}
-        to="/"
-      >
-        Logout
-      </Button>
-
-    </div>
-  );
-
-  const mobileMenuId = "primary-search-account-menu-mobile";
-  const renderMobileMenu = (
-    <Menu
-      anchorEl={mobileMoreAnchorEl}
-      anchorOrigin={{ vertical: "top", horizontal: "right" }}
-      id={mobileMenuId}
-      keepMounted
-      transformOrigin={{ vertical: "top", horizontal: "right" }}
-      open={isMobileMenuOpen}
-      onClose={handleMobileMenuClose}
-    >
-      <MenuItem>
-        <IconButton aria-label="show 4 new mails" color="inherit">
-          <Badge badgeContent={4} color="secondary">
-            <MailIcon />
-          </Badge>
-        </IconButton>
-        <p>Messages</p>
-      </MenuItem>
-      <MenuItem>
-        <IconButton aria-label="show 11 new notifications" color="inherit">
-          <Badge badgeContent={11} color="secondary">
-            <NotificationsIcon />
-          </Badge>
-        </IconButton>
-        <p>Notifications</p>
-      </MenuItem>
-      <MenuItem onClick={handleProfileMenuOpen}>
-        <IconButton
-          aria-label="account of current user"
-          aria-controls="primary-search-account-menu"
-          aria-haspopup="true"
-          color="inherit"
-        >
-          <AccountCircle />
-        </IconButton>
-        <p>Profile</p>
-      </MenuItem>
-    </Menu>
-  );
-
   async function fetchProject() {
     try {
       const result = await axios(setConfig(context, `${process.env.REACT_APP_BACKEND}/lbd/${currentProject}`))
@@ -221,22 +97,8 @@ function Navbar() {
             <Button color="inherit" onClick={fetchProject}>Search</Button>
           </div>
           <div className={classes.grow} />
-          <div className={classes.sectionMobile}>
-            <IconButton
-              aria-label="show more"
-              aria-controls={mobileMenuId}
-              aria-haspopup="true"
-              onClick={handleMobileMenuOpen}
-              color="inherit"
-            >
-              <MoreIcon />
-            </IconButton>
-          </div>
-          {checkAuthentication(context) ? loggedIn : notLoggedIn}
         </Toolbar>
       </AppBar>
-      {renderMobileMenu}
-      {renderMenu}
     </div>
   );
 }
