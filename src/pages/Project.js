@@ -10,7 +10,7 @@ import withStyles from "@material-ui/core/styles/withStyles";
 import styles from "@styles";
 import axios from "axios";
 import AppContext from "@context";
-import { Link } from "react-router-dom";
+import { Link, Redirect } from "react-router-dom";
 import Viewer from "@components/GeometryComponent/Viewer";
 
 import { ProjectBrowser } from "@components";
@@ -22,7 +22,7 @@ function Project(props) {
   function checkGLTFselection() {
     const gltfChecked = []
     context.activeDocuments.forEach((doc) => {
-      if (context.currentProject.documents[doc]["rdfs:label"] === "gltf") {
+      if (context.currentProject.documents[doc].metadata["rdfs:label"] === "gltf") {
         gltfChecked.push(true)
       } else {
         gltfChecked.push(false)
@@ -53,7 +53,7 @@ function Project(props) {
           </Grid>
         </Grid>
       ) : (
-        <div></div>
+        <Redirect to="/"/>
       )}
     </div>
   );

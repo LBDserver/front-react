@@ -119,7 +119,8 @@
             "@components": "./src/components",
             "@context": "./src/context/appContext.js",
             "@util": "./src/util",
-            "@styles": "./src/styles"
+            "@styles": "./src/styles",
+            "@functions": "./src/functions"
           }
         }
       ]

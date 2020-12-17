@@ -51,7 +51,7 @@ function ProjectSetup(props) {
       const result = await axios(config);
       console.log("results.data", result.data);
       setLoading(false);
-      setContext({...context, currentProject: {projectId: result.data.id, documents: {}, graphs: {}, projectMeta: parseTTL(result.data.projectGraph)}, activeDocuments: [], activeGraphs: []})
+      setContext({...context, currentProject: {id: result.data.id, documents: {}, graphs: {}, projectMeta: parseTTL(result.data.projectGraph)}, activeDocuments: [], activeGraphs: []})
 
       setProjectCreated(true)
     } catch (error) {

@@ -68,7 +68,7 @@ function executeQuery(query, context) {
   return new Promise(async (resolve, reject) => {
     try {
       const newQuery = await adaptQuery(query, context.activeGraphs)
-      const url = `${process.env.REACT_APP_BACKEND}/lbd/${context.currentProject.projectId}?query=${newQuery}`
+      const url = `${process.env.REACT_APP_BACKEND}/lbd/${context.currentProject.id}?query=${newQuery}`
       const results = await axios(setConfig(context, url))
       const selection = []
       results.data.results.results.bindings.forEach((binding) => {

@@ -124,19 +124,19 @@ export default function BrowserTabs() {
 
       switch (docType) {
         case "document":
-          uploadUrl = `${process.env.REACT_APP_BACKEND}/lbd/${context.currentProject.projectId}/files`;
+          uploadUrl = `${process.env.REACT_APP_BACKEND}/lbd/${context.currentProject.id}/files`;
           bodyFormData.append("file", fileToUpload);
           bodyFormData.append("label", docLabel);
           bodyFormData.append("description", docDescription);
           break;
         case "graph":
-          uploadUrl = `${process.env.REACT_APP_BACKEND}/lbd/${context.currentProject.projectId}/graphs`;
+          uploadUrl = `${process.env.REACT_APP_BACKEND}/lbd/${context.currentProject.id}/graphs`;
           bodyFormData.append("graph", fileToUpload);
           bodyFormData.append("label", graphLabel);
           bodyFormData.append("description", graphDescription);
           break;
         case "newGraph":
-          uploadUrl = `${process.env.REACT_APP_BACKEND}/lbd/${context.currentProject.projectId}/graphs`;
+          uploadUrl = `${process.env.REACT_APP_BACKEND}/lbd/${context.currentProject.id}/graphs`;
           bodyFormData.append("label", graphLabel);
           bodyFormData.append("description", graphDescription);
           break;
@@ -255,7 +255,7 @@ export default function BrowserTabs() {
                           checked={context.activeDocuments.includes(item)}
                         />
                       }
-                      label={`${item} (${context.currentProject.documents[item]["rdfs:label"]})`}
+                      label={`${context.currentProject.documents[item].metadata["rdfs:label"]}: ${context.currentProject.documents[item].metadata["rdfs:comment"]}`}
                     />
                   );
                 })
@@ -368,7 +368,7 @@ export default function BrowserTabs() {
                           checked={context.activeGraphs.includes(item)}
                         />
                       }
-                      label={`${item} (${context.currentProject.graphs[item]["rdfs:label"]})`}
+                      label={`${context.currentProject.graphs[item].metadata["rdfs:label"]}: ${context.currentProject.graphs[item].metadata["rdfs:comment"]}`}
                     />
                   );
                 })

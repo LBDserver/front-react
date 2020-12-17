@@ -18,7 +18,7 @@ const CardGrid = (props) => {
                 <Grid container justify="center" spacing={8}>
                     {props.projects.map((project) => (
                         <Grid key={project.id} item>
-                            <ProjectCard name={project.metadata["rdfs:label"]} description={project.metadata["rdfs:comment"]} />
+                            <ProjectCard project={project} />
                         </Grid>
                     ))}
                 </Grid>

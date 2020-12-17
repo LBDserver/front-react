@@ -14,7 +14,8 @@ function Viewer(props) {
     // const gltfChecked = ["https://jwerbrouck.inrupt.net/public/myProjects/gravensteen/model.txt"]
     const gltfChecked = []
     context.activeDocuments.forEach((doc) => {
-      if (context.currentProject.documents[doc]["rdfs:label"] === "gltf") {
+      console.log('doc', doc)
+      if (context.currentProject.documents[doc].metadata["rdfs:label"] === "gltf") {
         const fullUrl = url.parse(doc)
         const realDocUrl = doc.replace(`${fullUrl.protocol}//${fullUrl.host}`, process.env.REACT_APP_BACKEND)
 

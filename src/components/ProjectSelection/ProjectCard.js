@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useContext, useState} from 'react'
 import {
     Card,
     CardContent,
@@ -6,11 +6,10 @@ import {
     Typography
 } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
+import AppContext from '@context'
+import {Redirect} from 'react-router-dom'
 
 const useStyles = makeStyles({
-    root: {
-        minWidth: 275,
-    },
     card: {
         height: 300,
         width: 200,
@@ -19,35 +18,45 @@ const useStyles = makeStyles({
         fontSize: 14,
     },
     button: {
-        position: "relative",
         bottom: 50,
-        left: 20
     }
 });
 
 
 const ProjectCard = (props) => {
     const classes = useStyles()
+    const [projectClicked, setProjectClicked] = useState(false)
+    const {context, setContext} = useContext(AppContext)
 
-    
+    function activateProject () {
+        console.log('props.project', props.project)
+        setContext({...context, currentProject: props.project})
+        setProjectClicked(true)
+    }
 
     return (
-        <div className={classes.root}>
-            <Card className={classes.card} variant="outlined">
+        <div>
+            {(projectClicked) ? (
+                <Redirect to="/project" />
+            ) : (
+                <div>
+
+                <Card className={classes.card} variant="outlined">
                 <CardContent>
                     <Typography className={classes.title} color="textSecondary" gutterBottom>
                         LBDserver Project
                     </Typography>
                     <Typography variant="h5" component="h2">
-                        {props.name}
+                        {props.project.metadata["rdfs:label"]}
                     </Typography>
                     <Typography variant="body2" component="p">
-                        {props.description}
+                        {props.project.metadata["rdfs:comment"]}
                     </Typography>
                 </CardContent>
             </Card>
-            <Button className={classes.button} variant="contained" size="small" color="primary">Activate</Button>
-
+            <Button className={classes.button} variant="contained" size="small" color="primary" onClick={activateProject}>Activate</Button>
+            </div>
+            )}
         </div>
 
     )

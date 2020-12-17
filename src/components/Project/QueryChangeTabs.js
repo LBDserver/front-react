@@ -75,18 +75,7 @@ export default function QueryChangeTabs() {
           variant="fullWidth"
           aria-label="full width tabs example"
         >
-          {(context.activeGraphs.length === 1) ? (
-            <Tab label="Plugins" {...a11yProps(0)} />
-        ) : (
-          <div></div>
-        )}
-                  <Tab label="Query" {...a11yProps(1)} />
-
-          {(context.activeGraphs.length === 1) ? (
-            <Tab label="Turtle" {...a11yProps(1)} />
-        ) : (
-          <div></div>
-        )}
+                  <Tab label="Query" {...a11yProps(0)} />
         </Tabs>
       </AppBar>
       <SwipeableViews
@@ -94,25 +83,9 @@ export default function QueryChangeTabs() {
         index={value}
         onChangeIndex={handleChangeIndex}
       >
-                {(context.activeGraphs.length === 1) ? (
         <TabPanel value={value} index={0} dir={theme.direction}>
-        <PluginComponent/>
-      </TabPanel>
-        ) : (
-            <div></div>
-        )}
-        <TabPanel value={value} index={1} dir={theme.direction}>
           <QuerySparql/>
         </TabPanel>
-
-                {(context.activeGraphs.length === 1) ? (
-        <TabPanel value={value} index={2} dir={theme.direction}>
-        TBD: direct turtle adaptations
-      </TabPanel>
-        ) : (
-            <div></div>
-        )}
-
       </SwipeableViews>
     </div>
   );

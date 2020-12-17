@@ -9,12 +9,12 @@ import { useState, useEffect } from "react";
 import { ThemeProvider as MuiThemeProvider } from "@material-ui/core/styles";
 import createMuiTheme from "@material-ui/core/styles/createMuiTheme";
 import themeFile from "@util/theme";
-import axios from 'axios'
-import GeometryComponent from './components/GeometryComponent/GeometryComponentRhinoGLTF'
-
-import {newEngine} from '@comunica/actor-init-sparql';
+import axios from "axios";
+import { QueryClient, QueryClientProvider } from "react-query";
+import { newEngine } from "@comunica/actor-init-sparql";
 
 const theme = createMuiTheme(themeFile);
+const queryClient = new QueryClient();
 
 function App() {
   const [context, setContext] = useState(initialState);
@@ -22,33 +22,31 @@ function App() {
   useEffect(() => {
     try {
       const myEngine = newEngine();
-      setContext({...context, comunica: myEngine})   
+      setContext({ ...context, comunica: myEngine });
     } catch (error) {
-      console.log('error', error)
+      console.log("error", error);
     }
-  }, [])
-
+  }, []);
 
   return (
     <MuiThemeProvider theme={theme}>
       <AppContext.Provider value={{ context, setContext }}>
-        <Router>
-          <Navbar />
-          <Switch>
-            <Route exact path="/" component={Home} />
-            <Route exact path="/project" component={Project} />
-            <AuthRoute exact path="/projectsetup" component={ProjectSetup} />
-            <NonAuthRoute exact path="/register" component={Register} />
-            <NonAuthRoute exact path="/login" component={Login} />
-          </Switch>
-        </Router>
+        <QueryClientProvider client={queryClient}>
+          <Router>
+            <Navbar />
+            <Switch>
+              <Route exact path="/" component={Home} />
+              <Route exact path="/project" component={Project} />
+              <AuthRoute exact path="/projectsetup" component={ProjectSetup} />
+              <NonAuthRoute exact path="/register" component={Register} />
+              <NonAuthRoute exact path="/login" component={Login} />
+            </Switch>
+          </Router>
+        </QueryClientProvider>
       </AppContext.Provider>
     </MuiThemeProvider>
   );
 }
-
-
-
 
 // function App() {
 //   const model1= 'https://jwerbrouck.inrupt.net/public/myProjects/gravensteen/model.txt'

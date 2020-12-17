@@ -35,7 +35,7 @@ function QuerySparql() {
     async function executeQuery () {
         try {
             const newQuery = await adaptQuery()
-            const url = `${process.env.REACT_APP_BACKEND}/lbd/${context.currentProject.projectId}?query=${newQuery}`
+            const url = `${process.env.REACT_APP_BACKEND}/lbd/${context.currentProject.id}?query=${newQuery}`
             const results = await axios(setConfig(context, url))
             console.log('test')
 

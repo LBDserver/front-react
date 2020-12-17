@@ -6,6 +6,7 @@ import CardGrid from './CardGrid'
 
 const ProjectSelection = () => {
     const {isLoading, data: projectData} = useQuery('projects', getOpenProjects)
+    
     return (
         <div>
             {(isLoading) ? (
