@@ -1,16 +1,16 @@
-import React from 'react'
+import React, {useContext} from 'react'
 import {
     Card,
-    CardActions,
     CardContent,
     Button,
     Typography
 } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
+import AppContext from '@context'
+import { ActiveProject, Project } from 'lbdApi/interfaces';
 
 interface CardProps {
-    description: string,
-    name: string,
+    project: Project
     className?: string
 }
 
@@ -36,6 +36,13 @@ const useStyles = makeStyles({
 
 const ProjectCard = (props: CardProps) => {
     const classes = useStyles()
+    const {context, setContext} = useContext(AppContext)
+
+    function activateProject () {
+        const project: ActiveProject = {...props.project, selection: [], acl: }
+        
+        setContext({...context, activeProject: props.project})
+    }
 
     return (
         <div className={classes.root}>
@@ -45,14 +52,14 @@ const ProjectCard = (props: CardProps) => {
                         LBDserver Project
                     </Typography>
                     <Typography variant="h5" component="h2">
-                        {props.name}
+                        {props.project.metadata["rdfs:label"]}
                     </Typography>
                     <Typography variant="body2" component="p">
-                        {props.description}
+                        {props.project.metadata["rdfs:comment"]}
                     </Typography>
                 </CardContent>
             </Card>
-            <Button className={classes.button} variant="contained" size="small" color="primary">Activate</Button>
+            <Button className={classes.button} variant="contained" size="small" color="primary" onClick={activateProject}>Activate</Button>
 
         </div>
 

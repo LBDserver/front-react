@@ -3,7 +3,7 @@ import {
     User,
     ActiveProject,
     Context
-} from '@interfaces'
+} from 'lbdApi/interfaces'
 
 const firstContext: Context = {
     user: null,

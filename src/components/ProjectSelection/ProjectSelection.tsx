@@ -1,7 +1,7 @@
 import React, {useState, useContext, useEffect} from 'react'
 import AppContext from '@context'
-import {Project} from "@interfaces"
-import { getOpenProjects } from '@functions'
+import {Project} from "lbdApi/interfaces"
+import { getOpenProjects } from 'lbdApi/functions'
 import {useQuery} from 'react-query'
 import {Loading} from '../UtilComponents'
 import CardGrid from './CardGrid'

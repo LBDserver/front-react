@@ -1,4 +1,3 @@
-import { Graph } from "interfaces";
 import { Url } from "url";
 
 export interface User {
@@ -11,7 +10,7 @@ export interface User {
 export interface ProjectMeta {
     id: string,
     url: Url,
-    acl: Graph
+    acl: Url
 }
 
 export interface Credentials {
