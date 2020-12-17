@@ -1,2 +1,0 @@
-// contains user-related functions
-
