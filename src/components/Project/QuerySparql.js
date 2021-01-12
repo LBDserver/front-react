@@ -2,7 +2,7 @@ import React, { useContext, useState, Fragment } from "react";
 import AppContext from "@context";
 import { TextField, Button } from "@material-ui/core";
 import SearchIcon from "@material-ui/icons/Search";
-import {setConfig} from '@util/functions'
+import {setConfig} from '@functions'
 import axios from 'axios'
 import {translate, toSparql} from 'sparqlalgebrajs'
 const initialQuery = `PREFIX props: <https://w3id.org/props#>

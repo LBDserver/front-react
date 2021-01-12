@@ -1,6 +1,6 @@
 import React, { useState, useContext, useEffect } from 'react'
 import AppContext from '@context'
-import { setConfig, queryComunica, executeQuery, executeUpdate, adaptQuery } from '@util/functions'
+import { setConfig, queryComunica, executeQuery, executeUpdate, adaptQuery } from '@functions'
 import { v4 } from "uuid"
 import { Select, MenuItem, FormControl, InputLabel, TextField, Button } from '@material-ui/core'
 import Autocomplete from '@material-ui/lab/Autocomplete';

@@ -104,11 +104,24 @@ function adaptQuery(query, graphs) {
   })
 }
 
+function getOpenProjects() {
+  return new Promise(async (resolve, reject) => {
+      try {
+          const {data} = await axios.get(`${process.env.REACT_APP_BACKEND}/lbd/public`)
+          console.log('data', data)
+          resolve(data)
+      } catch (error) {
+          reject(error)
+      }
+  })
+}
+
 export {
   checkAuthentication,
   setConfig,
   queryComunica,
   executeQuery,
   adaptQuery,
-  executeUpdate
+  executeUpdate,
+  getOpenProjects
 }

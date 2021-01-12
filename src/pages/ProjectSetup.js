@@ -12,7 +12,7 @@ import useStyles from "@styles";
 import axios from "axios";
 import AppContext from "@context";
 import { Link, Redirect } from "react-router-dom";
-import { setConfig } from "@util/functions";
+import { setConfig } from "@functions";
 import {parse as parseTTL} from '@frogcat/ttl2jsonld'
 
 function ProjectSetup(props) {

@@ -1,7 +1,7 @@
 import React, {useContext} from 'react'
 import {Route, Redirect} from 'react-router-dom'
 import AppContext from '@context'
-import {checkAuthentication} from '@util/functions'
+import {checkAuthentication} from '@functions'
 
 const NonAuthRoute = ({component: Component, ...rest}) => {
     const {context}= useContext(AppContext)

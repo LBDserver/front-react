@@ -29,7 +29,6 @@ const ProjectCard = (props) => {
     const {context, setContext} = useContext(AppContext)
 
     function activateProject () {
-        console.log('props.project', props.project)
         setContext({...context, currentProject: props.project})
         setProjectClicked(true)
     }

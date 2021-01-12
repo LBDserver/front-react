@@ -1,6 +1,6 @@
 import React, { useState, useContext, useEffect } from 'react'
 import AppContext from '@context'
-import { setConfig, queryComunica, executeUpdate, adaptQuery, executeQuery} from '@util/functions'
+import { setConfig, queryComunica, executeUpdate, adaptQuery, executeQuery} from '@functions'
 import axios from 'axios'
 import url from 'url'
 import { v4 } from "uuid"
