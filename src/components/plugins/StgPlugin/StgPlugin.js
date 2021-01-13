@@ -78,8 +78,8 @@ function StgPlugin() {
     async function addNewRemark(e) {
         e.preventDefault()
         try {
-            const assumptionUri = `${context.activeGraphs[0]}#${v4()}`
-            const metadataUri = `${context.activeGraphs[0]}#${v4()}`
+            const assumptionUri = `${context.currentProject.activeGraphs[0]}#${v4()}`
+            const metadataUri = `${context.currentProject.activeGraphs[0]}#${v4()}`
             let updateQuery
             console.log('remarkType', remarkType)
             switch (remarkType) {
@@ -88,7 +88,7 @@ function StgPlugin() {
                     PREFIX stg: <https://raw.githubusercontent.com/JWerbrouck/Thesis/master/stg.ttl#>
                     PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 
-                    INSERT DATA { GRAPH <${context.activeGraphs[0]}> {
+                    INSERT DATA { GRAPH <${context.currentProject.activeGraphs[0]}> {
                         <${geoElement}> stg:hasMetadata <${metadataUri}> .
                         <${metadataUri}> stg:hasAssumption <${assumptionUri}> .
                         <${assumptionUri}> rdfs:comment "${newRemark}" .
@@ -99,7 +99,7 @@ function StgPlugin() {
                     updateQuery = `
                     PREFIX stg: <https://raw.githubusercontent.com/JWerbrouck/Thesis/master/stg.ttl#>
             
-                    INSERT DATA { GRAPH <${context.activeGraphs[0]}> {
+                    INSERT DATA { GRAPH <${context.currentProject.activeGraphs[0]}> {
                         <${geoElement}> stg:hasMetadata <${metadataUri}> .
                         <${metadataUri}> stg:hasLOA "${newRemark}" .
                     } }        
@@ -109,7 +109,7 @@ function StgPlugin() {
                     updateQuery = `
                     PREFIX stg: <https://raw.githubusercontent.com/JWerbrouck/Thesis/master/stg.ttl#>
             
-                    INSERT DATA { GRAPH <${context.activeGraphs[0]}> {
+                    INSERT DATA { GRAPH <${context.currentProject.activeGraphs[0]}> {
                         <${geoElement}> stg:hasMetadata <${metadataUri}> .
                         <${metadataUri}> stg:basedOn <${newRemark}> .
                     } }        
@@ -120,7 +120,7 @@ function StgPlugin() {
             }
 
 
-            await executeUpdate(updateQuery, context, context.activeGraphs[0])
+            await executeUpdate(updateQuery, context, context.currentProject.activeGraphs[0])
             const newRemarks = [...remarks, {value: newRemark, type: remarkType}]
             setRemarks(newRemarks)
             setNewRemark("")
@@ -212,8 +212,8 @@ function StgPlugin() {
     async function establishParentAndGeo(e) {
         e.preventDefault()
         try {
-            const parentUri = `${context.activeGraphs[0]}#${v4()}`
-            const geometryUri = `${context.activeGraphs[0]}#${v4()}`
+            const parentUri = `${context.currentProject.activeGraphs[0]}#${v4()}`
+            const geometryUri = `${context.currentProject.activeGraphs[0]}#${v4()}`
 
             const updateQuery = `
             PREFIX bot: <https://w3id.org/bot#>
@@ -222,12 +222,12 @@ function StgPlugin() {
             PREFIX omg: <https://w3id.org/omg#>
             PREFIX fog: <https://w3id.org/fog#>
     
-            INSERT DATA { GRAPH <${context.activeGraphs[0]}> {
+            INSERT DATA { GRAPH <${context.currentProject.activeGraphs[0]}> {
                 <${parentUri}> omg:hasGeometry <${geometryUri}> .
                 <${geometryUri}> fog:hasGltfId "${context.selection}" .
             } }        
             `
-            await executeUpdate(updateQuery, context, context.activeGraphs[0])
+            await executeUpdate(updateQuery, context, context.currentProject.activeGraphs[0])
             setParentElement(parentUri)
             setGeoElement(geometryUri)
         } catch (error) {

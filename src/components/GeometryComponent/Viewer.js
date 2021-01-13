@@ -13,13 +13,13 @@ function Viewer(props) {
   function checkGLTFselection() {
     // const gltfChecked = ["https://jwerbrouck.inrupt.net/public/myProjects/gravensteen/model.txt"]
     const gltfChecked = []
-    context.activeDocuments.forEach((doc) => {
-      console.log('doc', doc)
-      if (context.currentProject.documents[doc].metadata["rdfs:label"] === "gltf") {
+    context.currentProject.activeDocuments.forEach((doc) => {
+      if (context.currentProject.documents[doc]["rdfs:label"] === "gltf") {
         const fullUrl = url.parse(doc)
         const realDocUrl = doc.replace(`${fullUrl.protocol}//${fullUrl.host}`, process.env.REACT_APP_BACKEND)
 
         gltfChecked.push(realDocUrl)
+        console.log('gltfChecked', gltfChecked)
       }
     })
     return gltfChecked

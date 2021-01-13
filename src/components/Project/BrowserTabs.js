@@ -14,14 +14,15 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Switch from "@material-ui/core/Switch";
 import Button from "@material-ui/core/Button";
 import CloudUploadIcon from "@material-ui/icons/CloudUpload";
-import { CircularProgress } from "@material-ui/core"
+import { CircularProgress, Grid } from "@material-ui/core"
 import TextField from "@material-ui/core/TextField";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
-import { parse as parseTTL } from '@frogcat/ttl2jsonld'
+import { parse } from '@frogcat/ttl2jsonld'
+import * as api from '@functions'
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -36,7 +37,7 @@ function TabPanel(props) {
     >
       {value === index && (
         <Box p={3}>
-          <Typography>{children}</Typography>
+          <Typography component={"div"}>{children}</Typography>
         </Box>
       )}
     </div>
@@ -86,19 +87,18 @@ export default function BrowserTabs() {
   };
 
   const handleDocumentSelected = (e) => {
-    let activeDocuments = context.activeDocuments;
-
-    if (e.target.checked) {
-      activeDocuments.push(e.target.id);
-      setContext({ ...context, activeDocuments });
-    } else {
+    let activeDocuments = context.currentProject.activeDocuments;
+    if (!e.target.checked) {
       activeDocuments = activeDocuments.filter((item) => item !== e.target.id);
-      setContext({ ...context, activeDocuments });
+    } else {
+      activeDocuments.push(e.target.id);
     }
+    setContext({ ...context, currentProject: {...context.currentProject, activeDocuments} });
+
   };
 
   const handleGraphSelected = (e) => {
-    let activeGraphs = context.activeGraphs;
+    let activeGraphs = context.currentProject.activeGraphs;
 
     if (e.target.checked) {
       activeGraphs.push(e.target.id);
@@ -112,91 +112,35 @@ export default function BrowserTabs() {
   function handleInput(e) {
     e.preventDefault();
     setFileToUpload(e.target.files[0]);
-    console.log("e.target.files", e.target.files);
   }
 
   async function uploadInput(e, docType) {
     e.preventDefault();
     setLoading(true);
     try {
-      let uploadUrl;
-      const bodyFormData = new FormData();
-
+      let response, currentProject
       switch (docType) {
-        case "document":
-          uploadUrl = `${process.env.REACT_APP_BACKEND}/lbd/${context.currentProject.id}/files`;
-          bodyFormData.append("file", fileToUpload);
-          bodyFormData.append("label", docLabel);
-          bodyFormData.append("description", docDescription);
-          break;
-        case "graph":
-          uploadUrl = `${process.env.REACT_APP_BACKEND}/lbd/${context.currentProject.id}/graphs`;
-          bodyFormData.append("graph", fileToUpload);
-          bodyFormData.append("label", graphLabel);
-          bodyFormData.append("description", graphDescription);
-          break;
-        case "newGraph":
-          uploadUrl = `${process.env.REACT_APP_BACKEND}/lbd/${context.currentProject.id}/graphs`;
-          bodyFormData.append("label", graphLabel);
-          bodyFormData.append("description", graphDescription);
-          break;
-        default:
-          break;
-      }
-
-
-      const options = {
-        method: "post",
-        url: uploadUrl,
-        data: bodyFormData,
-        headers: {
-          Authorization: `Bearer ${context.token}`,
-          "Content-Type": `multipart/form-data; boundary=${bodyFormData._boundary}`,
-        },
-      };
-
-      console.log("options", options);
-      const result = await axios(options);
-
-      console.log("result", result.data);
-
-      let currentProject
-      switch (docType) {
-        case "document":
+        case "document": 
+          response = await api.uploadDocument({label: docLabel, file: fileToUpload, description: docDescription}, context)
           currentProject = context.currentProject
-          console.log('currentProject', currentProject)
-          currentProject["documents"][result.data.url] = parseTTL(result.data.metaGraph)
+          currentProject["documents"][response.uri] = response.metadata
           setContext({ ...context, currentProject })
           break;
         case "graph":
+          response = await api.uploadGraph({label: graphLabel, file: fileToUpload, description: graphDescription}, context)
           currentProject = context.currentProject
-          currentProject["graphs"][result.data.url] = parseTTL(result.data.metaGraph)
+          currentProject["graphs"][response.uri] = response.metadata
           setContext({ ...context, currentProject })
           break;
         case "newGraph":
+          response = await api.uploadGraph({label: graphLabel, description: graphDescription}, context)
           currentProject = context.currentProject
-          currentProject["graphs"][result.data.url] = parseTTL(result.data.metaGraph)
+          currentProject["graphs"][response.uri] = response.metadata
           setContext({ ...context, currentProject })
           break;
         default:
           break;
       }
-      // let metaUrl = url.parse(result.data.url);
-      // metaUrl = result.data.url.replace(
-      //   `${metaUrl.protocol}//${metaUrl.host}`,
-      //   process.env.REACT_APP_BACKEND
-      // );
-
-      // const getMetaOptions = {
-      //   method: "get",
-      //   url: `${metaUrl}.meta`,
-      //   headers: {
-      //     Authorization: `Bearer ${context.token}`,
-      //   },
-      // };
-
-      // const metaResult = await axios(getMetaOptions);
-      // console.log("metaResult", metaResult);
       setLoading(false);
       handleCloseDialog(false);
     } catch (error) {
@@ -244,6 +188,7 @@ export default function BrowserTabs() {
               Object.keys(context.currentProject.documents).length > 0 ? (
                 Object.keys(context.currentProject.documents).map((item, i) => {
                   return (
+                    <Grid item key={item} xs={12}>
                     <FormControlLabel
                       key={item}
                       control={
@@ -252,11 +197,13 @@ export default function BrowserTabs() {
                           onChange={handleDocumentSelected}
                           name="checkedB"
                           color="primary"
-                          checked={context.activeDocuments.includes(item)}
+                          // checked={context.currentProject.activeDocuments.includes(item)}
                         />
                       }
-                      label={`${context.currentProject.documents[item].metadata["rdfs:label"]}: ${context.currentProject.documents[item].metadata["rdfs:comment"]}`}
+                      label={`${context.currentProject.documents[item]["rdfs:label"]}: ${context.currentProject.documents[item]["rdfs:comment"]}`}
                     />
+                    </Grid>
+
                   );
                 })
               ) : (
@@ -357,6 +304,7 @@ export default function BrowserTabs() {
               Object.keys(context.currentProject.graphs).length > 0 ? (
                 Object.keys(context.currentProject.graphs).map((item, i) => {
                   return (
+                    <Grid item xs={12}>
                     <FormControlLabel
                       key={item}
                       control={
@@ -365,11 +313,13 @@ export default function BrowserTabs() {
                           onChange={handleGraphSelected}
                           name="checkedB"
                           color="primary"
-                          checked={context.activeGraphs.includes(item)}
+                          checked={context.currentProject.activeGraphs.includes(item)}
                         />
                       }
-                      label={`${context.currentProject.graphs[item].metadata["rdfs:label"]}: ${context.currentProject.graphs[item].metadata["rdfs:comment"]}`}
+                      label={`${context.currentProject.graphs[item]["rdfs:label"]}: ${context.currentProject.graphs[item]["rdfs:comment"]}`}
                     />
+                    </Grid>
+
                   );
                 })
               ) : (

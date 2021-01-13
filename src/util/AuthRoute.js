@@ -1,6 +1,6 @@
 import React, {useContext} from 'react'
 import {Route, Redirect} from 'react-router-dom'
-import {checkAuthentication} from '@functions'
+import {checkAuthentication} from '@util/functions'
 import AppContext from '@context'
 
 const AuthRoute = ({component: Component, authenticated, ...rest}) => {

@@ -25,7 +25,7 @@ export default function ProjectBrowser() {
                 >
                   <div className={classes.drawerHeader}>test</div>
                   <BrowserTabs />
-                  {(context.dataType && context.dataType === "graphs" && context.activeGraphs.length >= 1) ? <QueryChangeTabs /> : <div></div>}
+                  {(context.dataType && context.dataType === "graphs" && context.currentProject.activeGraphs.length >= 1) ? <QueryChangeTabs /> : <div></div>}
                 </Drawer>
         ) : <div></div>}
         

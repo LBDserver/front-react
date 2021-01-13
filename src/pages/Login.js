@@ -10,6 +10,7 @@ import useStyles from "@styles";
 import axios from 'axios'
 import AppContext from '@context'
 import {Link} from 'react-router-dom'
+import * as api from '@functions'
 
 function Login(props) {
   const classes = useStyles()
@@ -24,16 +25,10 @@ function Login(props) {
       try {
 
         setLoading(true);
-  
-        const details = await axios.post(`${process.env.REACT_APP_BACKEND}/login`, {}, {
-            auth: {
-                username: email,
-                password,
-            }
-        });
-        
+        const details = await api.login(email, password)
         setLoading(false);
-        setContext({...context, user: details.data.user, token: details.data.token})
+        
+        setContext({...context, user: details})
         
       } catch (error) {
         setLoading(false);

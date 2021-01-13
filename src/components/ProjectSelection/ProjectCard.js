@@ -27,9 +27,9 @@ const ProjectCard = (props) => {
     const classes = useStyles()
     const [projectClicked, setProjectClicked] = useState(false)
     const {context, setContext} = useContext(AppContext)
-
+    console.log('props.project', props.project)
     function activateProject () {
-        setContext({...context, currentProject: props.project})
+        setContext({...context, currentProject: {...props.project, activeGraphs: [], activeDocuments: []}})
         setProjectClicked(true)
     }
 
@@ -43,7 +43,7 @@ const ProjectCard = (props) => {
                 <Card className={classes.card} variant="outlined">
                 <CardContent>
                     <Typography className={classes.title} color="textSecondary" gutterBottom>
-                        LBDserver Project
+                        {(props.project.open) ? "public" : "personal"}
                     </Typography>
                     <Typography variant="h5" component="h2">
                         {props.project.metadata["rdfs:label"]}

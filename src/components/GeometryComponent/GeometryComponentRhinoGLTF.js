@@ -32,10 +32,10 @@ export default class GeometryComponent extends Component {
             visible: true
         });
 
-        const sectionPlanes = new SectionPlanesPlugin(viewer, {
-            overviewCanvasId: "mySectionPlanesOverviewCanvas",
-            overviewVisible: true
-        });
+        // const sectionPlanes = new SectionPlanesPlugin(viewer, {
+        //     overviewCanvasId: "mySectionPlanesOverviewCanvas",
+        //     overviewVisible: true
+        // });
 
         // sectionPlanes.createSectionPlane({
         //     id: "mySectionPlaneY",
@@ -54,7 +54,7 @@ export default class GeometryComponent extends Component {
         //     pos: [0,0, 5],
         //     dir: [0.0, 0, -1]
         // });
-
+        console.log('this.props.models', this.props.models)
         this.props.models.forEach((src) => {
             const modelProps = {
                 id: v4(),
@@ -62,6 +62,7 @@ export default class GeometryComponent extends Component {
                 edges: true,
                 performance: true,
             }
+            console.log('src', src)
             const model = loader.load(modelProps);
 
             model.on("loaded", () => {

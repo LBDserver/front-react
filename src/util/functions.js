@@ -2,7 +2,7 @@ import axios from 'axios'
 import url from 'url'
 
 function checkAuthentication(context) {
-  if (context.user && context.token) {
+  if (context.user && context.user.token) {
     return true
   } else {
     return false
@@ -15,9 +15,9 @@ const setConfig = (context, url) => {
     url
   };
 
-  if (context.token && context.user) {
+  if (context.user.token && context.user) {
     config.headers = {
-      'Authorization': `Bearer ${context.token}`
+      'Authorization': `Bearer ${context.user.token}`
     }
   }
   return config
@@ -49,9 +49,9 @@ async function executeUpdate(query, context, graph) {
         url: realGraphUrl
       };
 
-      if (context.token && context.user) {
+      if (context.user.token && context.user) {
         config.headers = {
-          'Authorization': `Bearer ${context.token}`
+          'Authorization': `Bearer ${context.user.token}`
         }
       }
 
@@ -67,7 +67,7 @@ async function executeUpdate(query, context, graph) {
 function executeQuery(query, context) {
   return new Promise(async (resolve, reject) => {
     try {
-      const newQuery = await adaptQuery(query, context.activeGraphs)
+      const newQuery = await adaptQuery(query, context.currentProject.activeGraphs)
       const url = `${process.env.REACT_APP_BACKEND}/lbd/${context.currentProject.id}?query=${newQuery}`
       const results = await axios(setConfig(context, url))
       const selection = []
@@ -104,24 +104,11 @@ function adaptQuery(query, graphs) {
   })
 }
 
-function getOpenProjects() {
-  return new Promise(async (resolve, reject) => {
-      try {
-          const {data} = await axios.get(`${process.env.REACT_APP_BACKEND}/lbd/public`)
-          console.log('data', data)
-          resolve(data)
-      } catch (error) {
-          reject(error)
-      }
-  })
-}
-
 export {
   checkAuthentication,
   setConfig,
   queryComunica,
   executeQuery,
   adaptQuery,
-  executeUpdate,
-  getOpenProjects
+  executeUpdate
 }

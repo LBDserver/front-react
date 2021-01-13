@@ -4,7 +4,8 @@ import { Link } from "react-router-dom";
 import AppContext from "@context";
 import { makeStyles, fade } from "@material-ui/core/styles";
 import CloseIcon from "@material-ui/icons/Close";
-import {checkAuthentication} from "@functions"
+import {checkAuthentication} from "@util/functions"
+import * as api from '@functions'
 
 const useStyles = makeStyles({
   title: {
@@ -37,26 +38,15 @@ const Navbar = () => {
       <Button color="inherit" component={Link} to="/projectsetup">
         Setup
       </Button>
-      <Button color="inherit" onClick={logout} component={Link} to="/">
+      <Button color="inherit" onClick={(logout)} component={Link} to="/">
         Logout
       </Button>
     </div>
   );
 
   async function logout(e) {
-    const config = {
-      method: "post",
-      url: `${process.env.REACT_APP_BACKEND}/logout`,
-      headers: {
-        Authorization: `Bearer ${context.token}`,
-      },
-    };
-    console.log("config", config);
-
-    const result = await axios(config);
-    console.log("result", result);
-
-    setContext({ ...context, user: null, token: null });
+    await api.logout(context)
+    setContext({ ...context, user: null });
   }
 
   return (
@@ -79,7 +69,7 @@ const Navbar = () => {
             <Button
               color="secondary"
               startIcon={
-                <CloseIcon fontSize="large" style={{ color: "white" }} />
+                <CloseIcon fontSize="large" style={{ color: "white", marginLeft: -25, marginBottom: 15 }} />
               }
               onClick={closeProject}
             />

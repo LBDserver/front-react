@@ -1,29 +1,60 @@
-import React, {useState, useContext, useEffect} from 'react'
-import { getOpenProjects } from '@functions'
-import {useQuery} from 'react-query'
-import {Loading} from '../UtilComponents'
-import CardGrid from './CardGrid'
+import React, { useState, useContext, useEffect } from "react";
+import * as api from "@functions";
+import { useQuery } from "react-query";
+import { Loading } from "../UtilComponents";
+import CardGrid from "./CardGrid";
+import AppContext from "@context";
 
 const ProjectSelection = () => {
-    const {isLoading, data: projectData} = useQuery('projects', getOpenProjects)
-    
-    return (
-        <div>
-            {(isLoading) ? (
-                <Loading/>
-            ) : (
-                <>
-                {(projectData) ? (
-                    <CardGrid projects={projectData}/>
-                ) : (
-                    <div>
-                        <p>No projects found</p>
-                    </div>
-                )}
-                </>
-            )}
-        </div>
-    )
-}
+  const { context, setContext } = useContext(AppContext);
 
-export default ProjectSelection
+  const { isLoading: publicIsLoading, data: publicProjectData } = useQuery(
+    "publicProjects",
+    api.getOpenProjects
+  );
+  const { isLoading: isLoading, data: myProjectData } = useQuery(
+    "myProjects",
+    () => api.getUserProjects(context),
+    { enabled: Boolean(context.user) }
+  );
+
+  const indices = []
+  const projects = []
+    if (publicProjectData) {
+        publicProjectData.forEach(project => {
+            project["open"] = true
+            projects.push(project)
+            indices.push(project.id)
+        })
+    }
+  
+    if (myProjectData) {
+        myProjectData.forEach(project => {
+            if (!indices.includes(project.id)) {
+                project["open"] = false
+                projects.push(project)
+            }
+        })
+    }
+
+
+  return (
+    <div>
+      {(publicIsLoading || isLoading) ? (
+        <Loading />
+      ) : (
+        <>
+          {(projects.length > 0) ? (
+            <CardGrid projects={projects} />
+          ) : (
+            <div>
+              <p>No projects found</p>
+            </div>
+          )}
+        </>
+      )}
+    </div>
+  );
+};
+
+export default ProjectSelection;

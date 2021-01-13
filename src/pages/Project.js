@@ -21,8 +21,8 @@ function Project(props) {
 
   function checkGLTFselection() {
     const gltfChecked = []
-    context.activeDocuments.forEach((doc) => {
-      if (context.currentProject.documents[doc].metadata["rdfs:label"] === "gltf") {
+    context.currentProject.activeDocuments.forEach((doc) => {
+      if (context.currentProject.documents[doc]["rdfs:label"] === "gltf") {
         gltfChecked.push(true)
       } else {
         gltfChecked.push(false)
@@ -43,7 +43,7 @@ function Project(props) {
             <ProjectBrowser />
           </Grid>
           <Grid xs={9} item>
-            {context.activeDocuments.length > 0 && checkGLTFselection() ? (
+            {context.currentProject.activeDocuments.length > 0 && checkGLTFselection() ? (
               <Viewer />
             ) : (
               <div style={{ margin: "200px", textAlign: "center" }}>

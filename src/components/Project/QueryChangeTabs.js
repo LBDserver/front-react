@@ -9,7 +9,7 @@ import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
 import AppContext from "@context"
 import QuerySparql from './QuerySparql';
-import PluginComponent from '../plugins'
+// import PluginComponent from '../plugins'
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;

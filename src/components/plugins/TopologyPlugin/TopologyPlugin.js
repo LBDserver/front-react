@@ -113,11 +113,11 @@ function TopologyPlugin() {
             const updateQuery = `
             PREFIX beo: <https://pi.pauwel.be/voc/buildingelement#>
     
-            INSERT DATA { GRAPH <${context.activeGraphs[0]}> {
+            INSERT DATA { GRAPH <${context.currentProject.activeGraphs[0]}> {
                 <${parentElement}> a <${selectedClassification}> .
             } }        
             `
-            await executeUpdate(updateQuery, context, context.activeGraphs[0])
+            await executeUpdate(updateQuery, context, context.currentProject.activeGraphs[0])
             const newClassifications = [...classifications, selectedClassification]
             setClassifications(newClassifications)
         } catch (error) {
@@ -162,8 +162,8 @@ function TopologyPlugin() {
     async function establishParent(e) {
         e.preventDefault()
         try {
-            const parentUri = `${context.activeGraphs[0]}#${v4()}`
-            const geometryUri = `${context.activeGraphs[0]}#${v4()}`
+            const parentUri = `${context.currentProject.activeGraphs[0]}#${v4()}`
+            const geometryUri = `${context.currentProject.activeGraphs[0]}#${v4()}`
 
             const updateQuery = `
             PREFIX bot: <https://w3id.org/bot#>
@@ -172,12 +172,12 @@ function TopologyPlugin() {
             PREFIX omg: <https://w3id.org/omg#>
             PREFIX fog: <https://w3id.org/fog#>
     
-            INSERT DATA { GRAPH <${context.activeGraphs[0]}> {
+            INSERT DATA { GRAPH <${context.currentProject.activeGraphs[0]}> {
                 <${parentUri}> omg:hasGeometry <${geometryUri}> .
                 <${geometryUri}> fog:hasGltfId "${context.selection}" .
             } }        
             `
-            await executeUpdate(updateQuery, context, context.activeGraphs[0])
+            await executeUpdate(updateQuery, context, context.currentProject.activeGraphs[0])
             setSelectedClassification("")
             setParentElement(parentUri)
         } catch (error) {

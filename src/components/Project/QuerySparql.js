@@ -2,7 +2,7 @@ import React, { useContext, useState, Fragment } from "react";
 import AppContext from "@context";
 import { TextField, Button } from "@material-ui/core";
 import SearchIcon from "@material-ui/icons/Search";
-import {setConfig} from '@functions'
+import {setConfig} from '@util/functions'
 import axios from 'axios'
 import {translate, toSparql} from 'sparqlalgebrajs'
 const initialQuery = `PREFIX props: <https://w3id.org/props#>
@@ -58,7 +58,7 @@ function QuerySparql() {
                 if (splitQuery.length <= 1) {
                     splitQuery = query.split('WHERE')
                 }
-                context.activeGraphs.forEach(graph => {
+                context.currentProject.activeGraphs.forEach(graph => {
                     splitQuery[0] = splitQuery[0] + `FROM <${graph}> `
                 })
     
