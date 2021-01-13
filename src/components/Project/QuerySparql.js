@@ -2,9 +2,9 @@ import React, { useContext, useState, Fragment } from "react";
 import AppContext from "@context";
 import { TextField, Button } from "@material-ui/core";
 import SearchIcon from "@material-ui/icons/Search";
-import {setConfig} from '@util/functions'
-import axios from 'axios'
 import {translate, toSparql} from 'sparqlalgebrajs'
+import {queryMultiple} from 'lbd-api'
+
 const initialQuery = `PREFIX props: <https://w3id.org/props#>
 PREFIX bot: <https://w3id.org/bot#>
 PREFIX beo: <https://pi.pauwel.be/voc/buildingelement#>
@@ -34,14 +34,14 @@ function QuerySparql() {
 
     async function executeQuery () {
         try {
-            const newQuery = await adaptQuery()
-            const url = `${process.env.REACT_APP_BACKEND}/lbd/${context.currentProject.id}?query=${newQuery}`
-            const results = await axios(setConfig(context, url))
-            console.log('test')
+          let token
+          if (context.user && context.user.token) {
+            token = context.user.token
+          }
+            const results = await queryMultiple(context.currentProject.id, query, context.currentProject.activeGraphs, token)
 
             const selection = []
-            results.data.results.results.bindings.forEach((binding) => {
-              console.log('binding', binding)
+            results.results.bindings.forEach((binding) => {
                 selection.push(binding.guid.value)
             })
             console.log('selection', selection)
@@ -63,7 +63,7 @@ function QuerySparql() {
                 })
     
                 let newQuery = splitQuery[0] + "WHERE" + splitQuery[1]
-                resolve(encodeURIComponent(newQuery))
+                resolve((newQuery))
             } catch (error) {
                 reject(error)
             }

@@ -62,7 +62,6 @@ export default class GeometryComponent extends Component {
                 edges: true,
                 performance: true,
             }
-            console.log('src', src)
             const model = loader.load(modelProps);
 
             model.on("loaded", () => {

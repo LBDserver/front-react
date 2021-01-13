@@ -9,9 +9,9 @@ import {
   Switch,
 } from "@material-ui/core";
 import useStyles from "@styles";
-import * as api from '@functions'
 import AppContext from "@context";
 import { Link, Redirect } from "react-router-dom";
+import {createProject} from 'lbd-api'
 
 function ProjectSetup() {
   const classes = useStyles();
@@ -27,7 +27,7 @@ function ProjectSetup() {
     e.preventDefault();
     try {
       setLoading(true);
-      const result = await api.createProject({title: projectName, description: projectDescription, open: publicness}, context)
+      const result = await createProject({title: projectName, description: projectDescription, open: publicness}, context.user.token)
       setLoading(false);
 
       setContext({...context, currentProject: {...result, activeDocuments: [], activeGraphs: []}})

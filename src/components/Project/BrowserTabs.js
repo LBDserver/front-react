@@ -22,7 +22,7 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import { parse } from '@frogcat/ttl2jsonld'
-import * as api from '@functions'
+import {uploadDocument, uploadGraph} from 'lbd-api'
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -102,11 +102,12 @@ export default function BrowserTabs() {
 
     if (e.target.checked) {
       activeGraphs.push(e.target.id);
-      setContext({ ...context, activeGraphs });
+      console.log('e.target.id', e.target.id)
     } else {
       activeGraphs = activeGraphs.filter((item) => item !== e.target.id);
-      setContext({ ...context, activeGraphs });
     }
+    setContext({ ...context, currentProject: {...context.currentProject, activeGraphs} });
+
   };
 
   function handleInput(e) {
@@ -121,19 +122,19 @@ export default function BrowserTabs() {
       let response, currentProject
       switch (docType) {
         case "document": 
-          response = await api.uploadDocument({label: docLabel, file: fileToUpload, description: docDescription}, context)
+          response = await uploadDocument({label: docLabel, file: fileToUpload, description: docDescription}, context.currentProject.id, context.user.token)
           currentProject = context.currentProject
           currentProject["documents"][response.uri] = response.metadata
           setContext({ ...context, currentProject })
           break;
         case "graph":
-          response = await api.uploadGraph({label: graphLabel, file: fileToUpload, description: graphDescription}, context)
+          response = await uploadGraph({label: graphLabel, file: fileToUpload, description: graphDescription}, context.currentProject.id, context.user.token)
           currentProject = context.currentProject
           currentProject["graphs"][response.uri] = response.metadata
           setContext({ ...context, currentProject })
           break;
         case "newGraph":
-          response = await api.uploadGraph({label: graphLabel, description: graphDescription}, context)
+          response = await uploadGraph({label: graphLabel, description: graphDescription}, context.currentProject.id, context.user.token)
           currentProject = context.currentProject
           currentProject["graphs"][response.uri] = response.metadata
           setContext({ ...context, currentProject })

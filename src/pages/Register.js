@@ -8,12 +8,12 @@ import {
 } from "@material-ui/core";
 import withStyles from "@material-ui/core/styles/withStyles";
 import styles from "@styles";
-import * as api from "@functions";
 import AppContext from "@context";
 import { Link } from "react-router-dom";
 import useStyles from "@styles";
 import { checkAuthentication } from "@util/functions";
 import {Redirect} from 'react-router-dom'
+import {register} from "lbd-api"
 
 function Register(props) {
   const { context, setContext } = useContext(AppContext);
@@ -26,6 +26,7 @@ function Register(props) {
   const [loading, setLoading] = useState(false);
   const classes = useStyles();
 
+
   async function submitRegistration(event) {
     event.preventDefault();
     try {
@@ -35,7 +36,7 @@ function Register(props) {
       }
       setLoading(true);
 
-      const details = await api.register(username, email, password);
+      const details = await register(username, email, password);
 
       setLoading(false);
       setContext({ ...context, user: details});

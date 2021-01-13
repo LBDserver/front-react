@@ -27,7 +27,6 @@ const ProjectCard = (props) => {
     const classes = useStyles()
     const [projectClicked, setProjectClicked] = useState(false)
     const {context, setContext} = useContext(AppContext)
-    console.log('props.project', props.project)
     function activateProject () {
         setContext({...context, currentProject: {...props.project, activeGraphs: [], activeDocuments: []}})
         setProjectClicked(true)

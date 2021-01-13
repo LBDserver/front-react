@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from "react";
-import * as api from "@functions";
+import {getOpenProjects, getUserProjects} from "lbd-api"
 import { useQuery } from "react-query";
 import { Loading } from "../UtilComponents";
 import CardGrid from "./CardGrid";
@@ -10,11 +10,11 @@ const ProjectSelection = () => {
 
   const { isLoading: publicIsLoading, data: publicProjectData } = useQuery(
     "publicProjects",
-    api.getOpenProjects
+    getOpenProjects
   );
   const { isLoading: isLoading, data: myProjectData } = useQuery(
     "myProjects",
-    () => api.getUserProjects(context),
+    () => getUserProjects(context.user.token),
     { enabled: Boolean(context.user) }
   );
 

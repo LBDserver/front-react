@@ -5,7 +5,7 @@ import AppContext from "@context";
 import { makeStyles, fade } from "@material-ui/core/styles";
 import CloseIcon from "@material-ui/icons/Close";
 import {checkAuthentication} from "@util/functions"
-import * as api from '@functions'
+import {logout} from 'lbd-api'
 
 const useStyles = makeStyles({
   title: {
@@ -45,7 +45,7 @@ const Navbar = () => {
   );
 
   async function logout(e) {
-    await api.logout(context)
+    await logout(context.user.token)
     setContext({ ...context, user: null });
   }
 
