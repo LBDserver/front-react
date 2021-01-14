@@ -15,10 +15,14 @@ interface CurrentProject extends API.IReturnProject {
 interface IContext {
     user: API.IReturnUser | null,
     currentProject: CurrentProject | null,
-    state: object,
-    plugins: object,
+    states: IPluginState[],
+    plugin: string,
     selection?: string,
     querySelection?: string[]
+}
+
+interface IPluginState {
+    [x: string]: any
 }
 
 export {

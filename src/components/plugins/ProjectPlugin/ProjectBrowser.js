@@ -23,7 +23,7 @@ export default function ProjectBrowser() {
   return (
     <div className={classes.root}>
       {context.currentProject ? (
-        <Collapse className={classes.drawer} in={collapse} timeout="auto" unmountOnExit horizontal>
+        <div>
           <Drawer
           
             className={classes.drawer}
@@ -44,7 +44,7 @@ export default function ProjectBrowser() {
               <div></div>
             )}
           </Drawer>{" "}
-        </Collapse>
+          </div>
       ) : (
         <div></div>
       )}

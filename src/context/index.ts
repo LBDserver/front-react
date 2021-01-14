@@ -4,8 +4,8 @@ import {IContext} from "../interfaces/contextInterface"
 export const initialState: IContext = {
  user: null,
  currentProject: null,
- state: {},
- plugins: {},
+ states: [{"project": {}}],
+ plugin: "project"
 }
 
 const initialContext = {

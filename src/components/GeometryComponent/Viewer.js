@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from "react";
-import Viewer from "./GeometryComponentRhinoGLTF";
+import Viewer from "./LBDviewer";
 import AppContext from "../ProjectPlugin/node_modules/@context";
 
 // function Viewer(props) {

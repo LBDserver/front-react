@@ -11,9 +11,10 @@ import styles from "@styles";
 import axios from "axios";
 import AppContext from "@context";
 import { Link, Redirect } from "react-router-dom";
-import Viewer from "@components/GeometryComponent/GeometryComponentRhinoGLTF";
+import Viewer from "@components/GeometryComponent/LBDviewer";
 import url from "url";
-import { ProjectBrowser, PluginDrawer } from "@components";
+import Plugins from "@components/plugins";
+import {drawerWidth} from '@styles'
 
 function Project(props) {
   const { context, setContext } = useContext(AppContext);
@@ -44,27 +45,30 @@ function Project(props) {
     setContext({ ...context, selection: guid });
   }
 
+  console.log('drawerWidth', parseInt(drawerWidth.substring(0, drawerWidth.length - 1)))
+
   return (
     <div>
       {context.currentProject ? (
         <Grid container className={classes.form}>
-                    <Grid xs={1} item>
-            <PluginDrawer/>
+                    <Grid xs={3} item>
+            <Plugins/>
           </Grid>
-          <Grid xs={3} item>
-            <ProjectBrowser />
-          </Grid>
-          <Grid xs={8} item>
+          <Grid xs={(context.plugin ? 12 : 12)} item>
             {context.currentProject.activeDocuments.length > 0 &&
             checkGLTFselection().length > 0 ? (
-              <Viewer
-                height="96%"
-                width="86%"
-                models={checkGLTFselection()}
-                projection={props.projection || "perspective"}
-                onSelect={onSelect}
-                selection={context.querySelection}
-              />
+              <div>
+                <Viewer
+                  height="96%"
+                  width={(context.plugin ? "100%" : "100%")}
+                  // width={(context.plugin ? `${100 - parseInt(drawerWidth.substring(0, drawerWidth.length - 1)+80)}%` : "100%")}
+                  models={checkGLTFselection()}
+                  projection={props.projection || "perspective"}
+                  onSelect={onSelect}
+                  selection={context.querySelection}
+                />
+              </div>
+
             ) : (
               <div style={{ margin: "200px", textAlign: "center" }}>
                 <h2>Please select a glTF file in the DOCUMENTS tab</h2>
