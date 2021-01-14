@@ -22,7 +22,7 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import { parse } from '@frogcat/ttl2jsonld'
-import {uploadDocument, uploadGraph} from 'lbd-api'
+import {uploadDocument, uploadGraph} from 'lbd-server'
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -102,7 +102,6 @@ export default function BrowserTabs() {
 
     if (e.target.checked) {
       activeGraphs.push(e.target.id);
-      console.log('e.target.id', e.target.id)
     } else {
       activeGraphs = activeGraphs.filter((item) => item !== e.target.id);
     }
@@ -112,6 +111,7 @@ export default function BrowserTabs() {
 
   function handleInput(e) {
     e.preventDefault();
+    console.log(typeof e.target.files[0])
     setFileToUpload(e.target.files[0]);
   }
 
@@ -163,6 +163,7 @@ export default function BrowserTabs() {
     setFileToUpload("");
   };
 
+
   return (
     <div className={classes.root}>
       <AppBar position="static" color="default">
@@ -198,7 +199,7 @@ export default function BrowserTabs() {
                           onChange={handleDocumentSelected}
                           name="checkedB"
                           color="primary"
-                          // checked={context.currentProject.activeDocuments.includes(item)}
+                          checked={context.currentProject.activeDocuments.includes(item)}
                         />
                       }
                       label={`${context.currentProject.documents[item]["rdfs:label"]}: ${context.currentProject.documents[item]["rdfs:comment"]}`}

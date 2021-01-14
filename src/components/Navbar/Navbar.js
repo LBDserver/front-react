@@ -5,7 +5,7 @@ import AppContext from "@context";
 import { makeStyles, fade } from "@material-ui/core/styles";
 import CloseIcon from "@material-ui/icons/Close";
 import {checkAuthentication} from "@util/functions"
-import {logout} from 'lbd-api'
+import {logout} from 'lbd-server'
 
 const useStyles = makeStyles({
   title: {

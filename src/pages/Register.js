@@ -13,7 +13,7 @@ import { Link } from "react-router-dom";
 import useStyles from "@styles";
 import { checkAuthentication } from "@util/functions";
 import {Redirect} from 'react-router-dom'
-import {register} from "lbd-api"
+import {register} from "lbd-server"
 
 function Register(props) {
   const { context, setContext } = useContext(AppContext);

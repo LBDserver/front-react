@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from 'react'
-import AppContext from '@context'
+import AppContext from '../../ProjectPlugin/node_modules/@context'
 import { setConfig, queryComunica, executeQuery, executeUpdate, adaptQuery } from '@functions'
 import axios from 'axios'
 import url from 'url'

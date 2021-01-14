@@ -1,4 +1,4 @@
-import * as API from "lbd-api"
+import * as API from "lbd-server"
 
 interface ISelection {
     method: "viewer" | "sparql"
@@ -16,7 +16,9 @@ interface IContext {
     user: API.IReturnUser | null,
     currentProject: CurrentProject | null,
     state: object,
-    plugins: object
+    plugins: object,
+    selection?: string,
+    querySelection?: string[]
 }
 
 export {

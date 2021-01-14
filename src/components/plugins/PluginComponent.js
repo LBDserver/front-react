@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
-import TopologyPlugin from './TopologyPlugin'
-import ClassificationPlugin from './ClassificationPlugin'
-import StgPlugin from './StgPlugin'
+// import TopologyPlugin from './TopologyPlugin'
+// import ClassificationPlugin from './ClassificationPlugin'
+// import StgPlugin from './StgPlugin'
 import { FormControl, InputLabel, Select, MenuItem } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles';
 

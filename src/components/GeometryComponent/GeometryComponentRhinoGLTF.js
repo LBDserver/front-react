@@ -7,7 +7,7 @@ import PropTypes from 'prop-types'
 import './layout.css'
 import { v4 } from 'uuid'
 
-export default class GeometryComponent extends Component {
+export default class LBDviewer extends Component {
     constructor(props) {
         super(props)
         this.state = {}
@@ -54,7 +54,6 @@ export default class GeometryComponent extends Component {
         //     pos: [0,0, 5],
         //     dir: [0.0, 0, -1]
         // });
-        console.log('this.props.models', this.props.models)
         this.props.models.forEach((src) => {
             const modelProps = {
                 id: v4(),
@@ -131,10 +130,10 @@ export default class GeometryComponent extends Component {
                         if (ifcGuid === "0000000000000000000000") {
                             // this.setState({ selection: [pickResult.entity.id] })
 
-                            this.props.selectionHandler([pickResult.entity.id])
+                            this.props.onSelect([pickResult.entity.id])
                         } else {
                             // this.setState({ selection: [pickResult.entity.id] })
-                            this.props.selectionHandler([ifcGuid])
+                            this.props.onSelect([ifcGuid])
                         }
 
 
@@ -157,7 +156,7 @@ export default class GeometryComponent extends Component {
                 entities[ent].highlighted = false
             })
             this.setState({ selection: '' })
-            this.props.selectionHandler([])
+            this.props.onSelect([])
 
             // if (lastEntityColorize) {
             //     lastEntityColorize.colorize = lastEntityColorize;
@@ -167,7 +166,6 @@ export default class GeometryComponent extends Component {
 
         this.setState({ viewer })
     }
-
 
     getGuid = (gltfGuid) => {
         var guidChars = [["0", 10], ["A", 26], ["a", 26], ["_", 1], ["$", 1]].map(function (a) {
@@ -213,9 +211,9 @@ export default class GeometryComponent extends Component {
 
     componentDidUpdate = () => {
         let entities = this.state.viewer.scene.objects
-        if (this.props.queryResults && this.props.queryResults !== this.state.lastQueried) {
-            let results = this.props.queryResults
-            console.log('results', results)
+        if (this.props.selection && this.props.selection !== this.state.lastQueried) {
+            let results = this.props.selection
+
             Object.keys(entities).forEach(ent => {
                 // let extension = this.props.models.split('.')
                 // extension = extension[extension.length - 1]
@@ -241,7 +239,7 @@ export default class GeometryComponent extends Component {
                 }
             })
 
-            this.setState({ lastQueried: this.props.queryResults, selection: results })
+            this.setState({ lastQueried: this.props.selection, selection: results })
         }
     }
 
@@ -264,7 +262,7 @@ export default class GeometryComponent extends Component {
     }
 }
 
-GeometryComponent.propTypes = {
+LBDviewer.propTypes = {
     projection: PropTypes.oneOf(['ortho', 'perspective']),
     height: PropTypes.string.isRequired,
     width: PropTypes.string.isRequired,
@@ -273,7 +271,8 @@ GeometryComponent.propTypes = {
     ifcGuidHandler: PropTypes.func
 }
 
-GeometryComponent.defaultProps = {
+LBDviewer.defaultProps = {
     projection: "ortho",
-    ifcGuidHandler: (guid) => { console.log(guid) }
+    ifcGuidHandler: (guid) => { console.log(guid) },
+    onSelect: (guid) => {console.log('guid', guid)}
 }

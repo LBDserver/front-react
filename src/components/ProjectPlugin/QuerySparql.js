@@ -3,7 +3,7 @@ import AppContext from "@context";
 import { TextField, Button } from "@material-ui/core";
 import SearchIcon from "@material-ui/icons/Search";
 import {translate, toSparql} from 'sparqlalgebrajs'
-import {queryMultiple} from 'lbd-api'
+import {queryMultiple} from 'lbd-server'
 
 const initialQuery = `PREFIX props: <https://w3id.org/props#>
 PREFIX bot: <https://w3id.org/bot#>
@@ -44,7 +44,6 @@ function QuerySparql() {
             results.results.bindings.forEach((binding) => {
                 selection.push(binding.guid.value)
             })
-            console.log('selection', selection)
             setContext({...context, querySelection: selection})
         } catch (error) {
             console.log('error', error)
@@ -76,7 +75,7 @@ function QuerySparql() {
         label="SPARQL Query"
         multiline
         fullWidth
-        rowsMax={10}
+        rowsMax={30}
         value={query}
         onChange={(e) => setQuery(e.target.value)}
       />

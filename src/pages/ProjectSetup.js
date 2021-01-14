@@ -11,7 +11,7 @@ import {
 import useStyles from "@styles";
 import AppContext from "@context";
 import { Link, Redirect } from "react-router-dom";
-import {createProject} from 'lbd-api'
+import {createProject} from 'lbd-server'
 
 function ProjectSetup() {
   const classes = useStyles();

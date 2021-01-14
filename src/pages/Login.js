@@ -10,7 +10,7 @@ import useStyles from "@styles";
 import axios from 'axios'
 import AppContext from '@context'
 import {Link} from 'react-router-dom'
-import {login} from "lbd-api"
+import {login} from "lbd-server"
 
 function Login(props) {
   const classes = useStyles()
