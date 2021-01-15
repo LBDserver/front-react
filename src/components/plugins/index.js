@@ -5,8 +5,8 @@ import CssBaseline from "@material-ui/core/CssBaseline";
 import Divider from "@material-ui/core/Divider";
 import { Button } from "@material-ui/core";
 import useStyles from "@styles";
-import ProjectPlugin from "./ProjectPlugin";
 import AppContext from "@context";
+import pluginDictionary from './pluginDictionary'
 
 export default function Plugins() {
   const classes = useStyles();
@@ -14,12 +14,7 @@ export default function Plugins() {
   const { context, setContext } = useContext(AppContext);
   const activePlugin = context.plugin || null
 
-  const pluginDictionary = {
-    project: ProjectPlugin,
-    //   topology: TopologyPlugin,
-    //   classification: ClassificationPlugin,
-    //   stg: StgPlugin
-  };
+
 
   function activatePlugin(plugin) {
     if (activePlugin === plugin) {

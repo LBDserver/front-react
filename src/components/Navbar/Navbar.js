@@ -60,12 +60,12 @@ const Navbar = () => {
         <div style={{ flexGrow: 1 }} />
         {context.currentProject ? (
           <>
-            <Typography style={{ marginRight: 5 }} variant="h6" noWrap>
+                        <Link style={{ color: "white", textDecoration: "none" }} to="/project">
+                        <Typography style={{ marginRight: 5 }} variant="h6" noWrap>
               {context.currentProject.metadata["rdfs:label"]}
             </Typography>
-            <Typography style={{ textAlign: "right" }}>
-              ({context.currentProject.id})
-            </Typography>
+              </Link>
+
             <Button
               color="secondary"
               startIcon={

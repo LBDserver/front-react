@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from 'react'
-import AppContext from '../../ProjectPlugin/node_modules/@context'
+import AppContext from '@context'
 import { setConfig, queryComunica, executeQuery, executeUpdate, adaptQuery } from '@functions'
 import { v4 } from "uuid"
 import { Select, MenuItem, FormControl, InputLabel, TextField, Button } from '@material-ui/core'

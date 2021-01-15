@@ -8,17 +8,11 @@ import QueryChangeTabs from "./QueryChangeTabs";
 import useStyles from "@styles";
 import Typography from "@material-ui/core/Typography";
 import AppContext from "@context";
-import { Collapse } from "@material-ui/core";
 
 
 export default function ProjectBrowser() {
   const classes = useStyles();
   const { context, setContext } = useContext(AppContext);
-  const [collapse, setCollapse] = useState(true);
-
-  const handleCollapse = (e) => {
-    setCollapse(!collapse);
-  };
 
   return (
     <div className={classes.root}>
@@ -33,7 +27,7 @@ export default function ProjectBrowser() {
               paper: classes.drawerPaper,
             }}
           >
-            <div className={classes.drawerHeader}>test</div>
+            <div className={classes.drawerHeader}/>
             
             <BrowserTabs />
             {context.dataType &&
