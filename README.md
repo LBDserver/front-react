@@ -26,7 +26,7 @@
 ## End result
 If all goes well, you should be able to end up with an interactive 3D environment like the one below:
 
-![screenshot](img/screenshot2.png "Screenshot of working interface for the TU Eindhoven Atlas building")
+![screenshot](img/screenshot2.png "Screenshot of working interface for the Duplex example")
 
 ## Creat your own plugin
 Information on how to create your own plugin is available on the [wiki](https://github.com/LBDserver/front-react/wiki/Creating-a-Plugin-in-the-GUI)
