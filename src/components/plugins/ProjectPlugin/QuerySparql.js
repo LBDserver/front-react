@@ -1,6 +1,6 @@
 import React, { useContext, useState, Fragment } from "react";
 import AppContext from "@context";
-import { TextField, Button } from "@material-ui/core";
+import { TextField, Button, Grid } from "@material-ui/core";
 import SearchIcon from "@material-ui/icons/Search";
 import {translate, toSparql} from 'sparqlalgebrajs'
 import {queryMultiple} from 'lbd-server'
@@ -69,7 +69,8 @@ function QuerySparql() {
         })
     }
   return (
-    <Fragment>
+    <Grid>
+      <Grid item>
       <TextField
         id="standard-multiline-flexible"
         label="SPARQL Query"
@@ -79,21 +80,24 @@ function QuerySparql() {
         value={query}
         onChange={(e) => setQuery(e.target.value)}
       />
+      </Grid>
+      <Grid item>
       <Button
         variant="contained"
         color="secondary"
         startIcon={<SearchIcon fontSize="large" />}
         style={{
           bottom: 0,
-          marginTop: "5%",
-          left: "70%",
+          marginTop: 15,
           width: '120px'
         }}
         onClick={e => executeQuery()}
       >
         Query
       </Button>
-    </Fragment>
+      </Grid>
+
+    </Grid>
   );
 }
 

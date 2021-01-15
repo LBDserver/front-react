@@ -26,7 +26,5 @@
 ## End result
 If all goes well, you should be able to end up with an interactive 3D environment like the one below:
 
-![screenshot](img/screenshot.png "Screenshot of working interface for the TU Eindhoven Atlas building")
-
-* By default, unauthenticated agents have read access (you can change this at setup or later). So the guid of your active project can actually be used by other people to read project data. If you store it for later use, or you're comfortable using MongoDB or GraphDB GUIs.
+![screenshot](img/screenshot2.png "Screenshot of working interface for the TU Eindhoven Atlas building")
 

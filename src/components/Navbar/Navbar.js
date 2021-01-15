@@ -4,8 +4,8 @@ import { Link } from "react-router-dom";
 import AppContext from "@context";
 import { makeStyles, fade } from "@material-ui/core/styles";
 import CloseIcon from "@material-ui/icons/Close";
-import {checkAuthentication} from "@util/functions"
-import {logout} from 'lbd-server'
+import { checkAuthentication } from "@util/functions";
+import { logout } from "lbd-server";
 
 const useStyles = makeStyles({
   title: {
@@ -38,16 +38,17 @@ const Navbar = () => {
       <Button color="inherit" component={Link} to="/projectsetup">
         Setup
       </Button>
-      <Button color="inherit" onClick={(logout)} component={Link} to="/">
+      <Button color="inherit" onClick={logout} component={Link} to="/">
         Logout
       </Button>
     </div>
   );
 
   async function logout(e) {
-    await logout(context.user.token)
+    await logout(context.user.token);
     setContext({ ...context, user: null });
   }
+
 
   return (
     <AppBar className={classes.appBar}>
@@ -60,16 +61,22 @@ const Navbar = () => {
         <div style={{ flexGrow: 1 }} />
         {context.currentProject ? (
           <>
-                        <Link style={{ color: "white", textDecoration: "none" }} to="/project">
-                        <Typography style={{ marginRight: 5 }} variant="h6" noWrap>
-              {context.currentProject.metadata["rdfs:label"]}
-            </Typography>
-              </Link>
+            <Link
+              style={{ color: "white", textDecoration: "none" }}
+              to="/project"
+            >
+              <Typography style={{ marginRight: 5 }} variant="h6" noWrap>
+                {context.currentProject.metadata["rdfs:label"]}
+              </Typography>
+            </Link>
 
             <Button
               color="secondary"
               startIcon={
-                <CloseIcon fontSize="large" style={{ color: "white", marginLeft: -25, marginBottom: 15 }} />
+                <CloseIcon
+                  fontSize="large"
+                  style={{ color: "white", marginLeft: -25, marginBottom: 15 }}
+                />
               }
               onClick={closeProject}
             />
