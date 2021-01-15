@@ -3,7 +3,7 @@ import AccountTreeIcon from '@material-ui/icons/AccountTree';
 
 const pluginObject = {
     plugin: ProjectBrowser,
-    icon: AccountTreeIcon
+    icon: AccountTreeIcon,
 }
 
 export default pluginObject

@@ -5,7 +5,9 @@ export const initialState: IContext = {
  user: null,
  currentProject: null,
  states: [{"project": {}}],
- plugin: "project"
+ plugin: "project",
+ selection: null,
+ querySelection: null
 }
 
 const initialContext = {

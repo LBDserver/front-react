@@ -1,24 +1,17 @@
-import * as API from "lbd-server"
+import {IReturnProject, IReturnUser} from "lbd-server"
 
-interface ISelection {
-    method: "viewer" | "sparql"
-    url: string,
-    children: string[]
-}
-
-interface CurrentProject extends API.IReturnProject {
+interface CurrentProject extends IReturnProject {
     activeGraphs: string[],
-    activeDocuments: string[],
-    selection?: ISelection[]
+    activeDocuments: string[]
 }
 
 interface IContext {
-    user: API.IReturnUser | null,
+    user: IReturnUser | null,
     currentProject: CurrentProject | null,
     states: IPluginState[],
-    plugin: string,
-    selection?: string,
-    querySelection?: string[]
+    plugin: string | null,
+    selection: string | null,
+    querySelection: string[] | null
 }
 
 interface IPluginState {

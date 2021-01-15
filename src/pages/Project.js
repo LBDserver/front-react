@@ -13,17 +13,13 @@ import AppContext from "@context";
 import { Link, Redirect } from "react-router-dom";
 import Viewer from "@components/GeometryComponent/LBDviewer";
 import url from "url";
-import Plugins from "@components/plugins";
+import Plugins from "../plugins";
 import {drawerWidth} from '@styles'
 
 function Project(props) {
   const { context, setContext } = useContext(AppContext);
   const { classes } = props;
   const [collapse, setCollapse] = useState(true);
-
-  const handleCollapse = (e) => {
-    setCollapse(!collapse);
-  };
 
   function checkGLTFselection() {
     const gltfChecked = [];

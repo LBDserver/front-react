@@ -1,6 +1,5 @@
 import ProjectPlugin from "./ProjectPlugin";
 import PluginTemplate from "./PluginTemplate"
-import PluginJeroen from "./PluginJeroen"
 
 const pluginDictionary = {
     project: ProjectPlugin,
