@@ -24,7 +24,7 @@ function Project(props) {
   function checkGLTFselection() {
     const gltfChecked = [];
     context.currentProject.activeDocuments.forEach((doc) => {
-      if (context.currentProject.documents[doc]["rdfs:label"] === "gltf") {
+      if (context.currentProject.documents[doc].metadata["rdfs:label"] === "gltf") {
         const fullUrl = url.parse(doc);
         const realDocUrl = doc.replace(
           `${fullUrl.protocol}//${fullUrl.host}`,
@@ -36,12 +36,10 @@ function Project(props) {
     return gltfChecked;
   }
 
-  function onSelect(guid) {
-    console.log("selected element with guid", guid);
-    setContext({ ...context, selection: guid });
+  function onSelect(guids) {
+    console.log("selected elements", guids);
+    setContext({ ...context, selection: guids });
   }
-
-  console.log('drawerWidth', parseInt(drawerWidth.substring(0, drawerWidth.length - 1)))
 
   return (
     <div>
@@ -61,7 +59,7 @@ function Project(props) {
                   models={checkGLTFselection()}
                   projection={props.projection || "perspective"}
                   onSelect={onSelect}
-                  selection={context.querySelection}
+                  selection={context.selection}
                 />
               </div>
 

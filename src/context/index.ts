@@ -6,8 +6,7 @@ export const initialState: IContext = {
  currentProject: null,
  states: [{"project": {}}],
  plugin: "project",
- selection: null,
- querySelection: null
+ selection: []
 }
 
 const initialContext = {

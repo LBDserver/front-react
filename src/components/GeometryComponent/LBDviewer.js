@@ -130,10 +130,10 @@ export default class LBDviewer extends Component {
                         if (ifcGuid === "0000000000000000000000") {
                             // this.setState({ selection: [pickResult.entity.id] })
 
-                            this.props.onSelect([pickResult.entity.id])
+                            this.props.onSelect([{guid: pickResult.entity.id}])
                         } else {
                             // this.setState({ selection: [pickResult.entity.id] })
-                            this.props.onSelect([ifcGuid])
+                            this.props.onSelect([{guid: ifcGuid}])
                         }
 
 
@@ -155,7 +155,7 @@ export default class LBDviewer extends Component {
             Object.keys(entities).forEach(ent => {
                 entities[ent].highlighted = false
             })
-            this.setState({ selection: '' })
+            this.setState({ selection: [] })
             this.props.onSelect([])
 
             // if (lastEntityColorize) {
@@ -212,8 +212,10 @@ export default class LBDviewer extends Component {
     componentDidUpdate = () => {
         let entities = this.state.viewer.scene.objects
         if (this.props.selection && this.props.selection !== this.state.lastQueried) {
-            let results = this.props.selection
-
+            let results = []
+            this.props.selection.forEach(object => {
+                results.push(object.guid)
+            })
             Object.keys(entities).forEach(ent => {
                 // let extension = this.props.models.split('.')
                 // extension = extension[extension.length - 1]
@@ -239,7 +241,7 @@ export default class LBDviewer extends Component {
                 }
             })
 
-            this.setState({ lastQueried: this.props.selection, selection: results })
+            this.setState({ lastQueried: this.props.selection, selection: this.props.selection })
         }
     }
 
@@ -274,5 +276,5 @@ LBDviewer.propTypes = {
 LBDviewer.defaultProps = {
     projection: "ortho",
     ifcGuidHandler: (guid) => { console.log(guid) },
-    onSelect: (guid) => {console.log('guid', guid)}
+    onSelect: (selection) => {console.log('guid', selection.guid)}
 }

@@ -13,9 +13,9 @@ PREFIX omg: <https://w3id.org/omg#>
 PREFIX fog: <https://w3id.org/fog#>
 SELECT ?s ?guid
 WHERE {
-    ?s a beo:Column; 
-        omg:hasGeometry/fog:hasGltfId ?guid .
-        # props:globalIdIfcRoot/schema:value ?guid .
+    ?s a beo:Door; 
+        # omg:hasGeometry/fog:hasGltfId ?guid .
+        props:globalIdIfcRoot/schema:value ?guid .
 }`;
 
 const initialQueryIfc = `PREFIX props: <https://w3id.org/props#>
@@ -42,9 +42,9 @@ function QuerySparql() {
 
             const selection = []
             results.results.bindings.forEach((binding) => {
-                selection.push(binding.guid.value)
+                selection.push({guid: binding.guid.value})
             })
-            setContext({...context, querySelection: selection})
+            setContext({...context, selection})
         } catch (error) {
             console.log('error', error)
         }

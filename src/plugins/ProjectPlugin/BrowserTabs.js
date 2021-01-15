@@ -202,7 +202,7 @@ export default function BrowserTabs() {
                           checked={context.currentProject.activeDocuments.includes(item)}
                         />
                       }
-                      label={`${context.currentProject.documents[item]["rdfs:label"]}: ${context.currentProject.documents[item]["rdfs:comment"]}`}
+                      label={`${context.currentProject.documents[item].metadata["rdfs:label"]}: ${context.currentProject.documents[item].metadata["rdfs:comment"]}`}
                     />
                     </Grid>
 
@@ -318,7 +318,7 @@ export default function BrowserTabs() {
                           checked={context.currentProject.activeGraphs.includes(item)}
                         />
                       }
-                      label={`${context.currentProject.graphs[item]["rdfs:label"]}: ${context.currentProject.graphs[item]["rdfs:comment"]}`}
+                      label={`${context.currentProject.graphs[item].metadata["rdfs:label"]}: ${context.currentProject.graphs[item].metadata["rdfs:comment"]}`}
                     />
                     </Grid>
 

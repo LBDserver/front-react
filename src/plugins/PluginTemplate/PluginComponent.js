@@ -30,11 +30,14 @@ export default function MyPlugin() {
               <Typography>This is my plugin window!</Typography>
               <Typography>
                 Current selection:
-                {context.selection && context.selection.length > 0 ? (
-                  <> {context.selection}</>
+                {(context.selection.length > 0) ? (
+                  context.selection.map(item => {
+                    return <p> {item.guid}</p>
+                  })
                 ) : (
                   <> nothing selected</>
                 )}
+
               </Typography>
             </div>
           </Drawer>{" "}
