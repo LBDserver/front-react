@@ -10,43 +10,65 @@ import withStyles from "@material-ui/core/styles/withStyles";
 import styles from "@styles";
 import axios from "axios";
 import AppContext from "@context";
-import { Link } from "react-router-dom";
-import Viewer from "@components/GeometryComponent/Viewer";
-
-import { ProjectBrowser } from "@components";
+import { Link, Redirect } from "react-router-dom";
+import Viewer from "@components/GeometryComponent/LBDviewer";
+import url from "url";
+import Plugins from "@components/plugins";
+import {drawerWidth} from '@styles'
 
 function Project(props) {
   const { context, setContext } = useContext(AppContext);
   const { classes } = props;
-  console.log("context", context);
+  const [collapse, setCollapse] = useState(true);
+
+  const handleCollapse = (e) => {
+    setCollapse(!collapse);
+  };
 
   function checkGLTFselection() {
-    const gltfChecked = []
-    context.activeDocuments.forEach((doc) => {
-      console.log(context.currentProject.documents[doc]["rdfs:label"]);
+    const gltfChecked = [];
+    context.currentProject.activeDocuments.forEach((doc) => {
       if (context.currentProject.documents[doc]["rdfs:label"] === "gltf") {
-        gltfChecked.push(true)
-      } else {
-        gltfChecked.push(false)
+        const fullUrl = url.parse(doc);
+        const realDocUrl = doc.replace(
+          `${fullUrl.protocol}//${fullUrl.host}`,
+          process.env.REACT_APP_BACKEND
+        );
+        gltfChecked.push(realDocUrl);
       }
-    })
-    if (gltfChecked.includes(true)) {
-      return true
-    }
-    return false
-  
+    });
+    return gltfChecked;
   }
+
+  function onSelect(guid) {
+    console.log("selected element with guid", guid);
+    setContext({ ...context, selection: guid });
+  }
+
+  console.log('drawerWidth', parseInt(drawerWidth.substring(0, drawerWidth.length - 1)))
 
   return (
     <div>
       {context.currentProject ? (
         <Grid container className={classes.form}>
-          <Grid xs={3} item>
-            <ProjectBrowser />
+                    <Grid xs={3} item>
+            <Plugins/>
           </Grid>
-          <Grid xs={9} item>
-            {context.activeDocuments.length > 0 && checkGLTFselection() ? (
-              <Viewer />
+          <Grid xs={(context.plugin ? 12 : 12)} item>
+            {context.currentProject.activeDocuments.length > 0 &&
+            checkGLTFselection().length > 0 ? (
+              <div>
+                <Viewer
+                  height="96%"
+                  width={(context.plugin ? "100%" : "100%")}
+                  // width={(context.plugin ? `${100 - parseInt(drawerWidth.substring(0, drawerWidth.length - 1)+80)}%` : "100%")}
+                  models={checkGLTFselection()}
+                  projection={props.projection || "perspective"}
+                  onSelect={onSelect}
+                  selection={context.querySelection}
+                />
+              </div>
+
             ) : (
               <div style={{ margin: "200px", textAlign: "center" }}>
                 <h2>Please select a glTF file in the DOCUMENTS tab</h2>
@@ -55,7 +77,7 @@ function Project(props) {
           </Grid>
         </Grid>
       ) : (
-        <div></div>
+        <Redirect to="/" />
       )}
     </div>
   );

@@ -2,10 +2,23 @@ import React, { useContext, useState, Fragment } from "react";
 import AppContext from "@context";
 import { TextField, Button } from "@material-ui/core";
 import SearchIcon from "@material-ui/icons/Search";
-import {setConfig} from '@util/functions'
-import axios from 'axios'
 import {translate, toSparql} from 'sparqlalgebrajs'
+import {queryMultiple} from 'lbd-server'
+
 const initialQuery = `PREFIX props: <https://w3id.org/props#>
+PREFIX bot: <https://w3id.org/bot#>
+PREFIX beo: <https://pi.pauwel.be/voc/buildingelement#>
+PREFIX schema: <http://schema.org/>
+PREFIX omg: <https://w3id.org/omg#>
+PREFIX fog: <https://w3id.org/fog#>
+SELECT ?s ?guid
+WHERE {
+    ?s a beo:Column; 
+        omg:hasGeometry/fog:hasGltfId ?guid .
+        # props:globalIdIfcRoot/schema:value ?guid .
+}`;
+
+const initialQueryIfc = `PREFIX props: <https://w3id.org/props#>
 PREFIX bot: <https://w3id.org/bot#>
 PREFIX beo: <https://pi.pauwel.be/voc/buildingelement#>
 PREFIX schema: <http://schema.org/>
@@ -21,16 +34,17 @@ function QuerySparql() {
 
     async function executeQuery () {
         try {
-            const newQuery = await adaptQuery()
-            const url = `${process.env.REACT_APP_BACKEND}/lbd/${context.currentProject.projectId}?query=${newQuery}`
-            const results = await axios(setConfig(context, url))
+          let token
+          if (context.user && context.user.token) {
+            token = context.user.token
+          }
+            const results = await queryMultiple(context.currentProject.id, query, context.currentProject.activeGraphs, token)
 
             const selection = []
-            results.data.results.results.bindings.forEach((binding) => {
+            results.results.bindings.forEach((binding) => {
                 selection.push(binding.guid.value)
             })
-            console.log('selection', selection)
-            setContext({...context, selection})
+            setContext({...context, querySelection: selection})
         } catch (error) {
             console.log('error', error)
         }
@@ -43,12 +57,12 @@ function QuerySparql() {
                 if (splitQuery.length <= 1) {
                     splitQuery = query.split('WHERE')
                 }
-                context.activeGraphs.forEach(graph => {
+                context.currentProject.activeGraphs.forEach(graph => {
                     splitQuery[0] = splitQuery[0] + `FROM <${graph}> `
                 })
     
                 let newQuery = splitQuery[0] + "WHERE" + splitQuery[1]
-                resolve(encodeURIComponent(newQuery))
+                resolve((newQuery))
             } catch (error) {
                 reject(error)
             }
@@ -61,7 +75,7 @@ function QuerySparql() {
         label="SPARQL Query"
         multiline
         fullWidth
-        rowsMax={10}
+        rowsMax={30}
         value={query}
         onChange={(e) => setQuery(e.target.value)}
       />

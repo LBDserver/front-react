@@ -14,14 +14,15 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Switch from "@material-ui/core/Switch";
 import Button from "@material-ui/core/Button";
 import CloudUploadIcon from "@material-ui/icons/CloudUpload";
-import {CircularProgress} from "@material-ui/core"
+import { CircularProgress, Grid } from "@material-ui/core"
 import TextField from "@material-ui/core/TextField";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
-import {parse as parseTTL} from '@frogcat/ttl2jsonld'
+import { parse } from '@frogcat/ttl2jsonld'
+import {uploadDocument, uploadGraph} from 'lbd-server'
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -36,7 +37,7 @@ function TabPanel(props) {
     >
       {value === index && (
         <Box p={3}>
-          <Typography>{children}</Typography>
+          <Typography component={"div"}>{children}</Typography>
         </Box>
       )}
     </div>
@@ -70,8 +71,10 @@ export default function BrowserTabs() {
   const [value, setValue] = useState(0);
   const [openDialog, setOpenDialog] = useState(false);
   const [fileToUpload, setFileToUpload] = useState();
-  const [label, setLabel] = useState("gltf");
-  const [description, setDescription] = useState("test");
+  const [docLabel, setDocLabel] = useState("gltf");
+  const [docDescription, setDocDescription] = useState("This is a gltf file");
+  const [graphLabel, setGraphLabel] = useState("topology");
+  const [graphDescription, setGraphDescription] = useState("The topology of the building");
   const [loading, setLoading] = useState(false);
 
   const handleChange = (event, newValue) => {
@@ -84,107 +87,61 @@ export default function BrowserTabs() {
   };
 
   const handleDocumentSelected = (e) => {
-    let activeDocuments = context.activeDocuments;
-
-    if (e.target.checked) {
-      activeDocuments.push(e.target.id);
-      setContext({ ...context, activeDocuments });
-    } else {
+    let activeDocuments = context.currentProject.activeDocuments;
+    if (!e.target.checked) {
       activeDocuments = activeDocuments.filter((item) => item !== e.target.id);
-      setContext({ ...context, activeDocuments });
+    } else {
+      activeDocuments.push(e.target.id);
     }
+    setContext({ ...context, currentProject: {...context.currentProject, activeDocuments} });
+
   };
 
   const handleGraphSelected = (e) => {
-    let activeGraphs = context.activeGraphs;
+    let activeGraphs = context.currentProject.activeGraphs;
 
     if (e.target.checked) {
       activeGraphs.push(e.target.id);
-      setContext({ ...context, activeGraphs });
     } else {
       activeGraphs = activeGraphs.filter((item) => item !== e.target.id);
-      setContext({ ...context, activeGraphs });
     }
+    setContext({ ...context, currentProject: {...context.currentProject, activeGraphs} });
+
   };
 
   function handleInput(e) {
     e.preventDefault();
+    console.log(typeof e.target.files[0])
     setFileToUpload(e.target.files[0]);
-    console.log("e.target.files", e.target.files);
   }
 
   async function uploadInput(e, docType) {
     e.preventDefault();
     setLoading(true);
     try {
-      let uploadUrl;
-      const bodyFormData = new FormData();
-
+      let response, currentProject
       switch (docType) {
-        case "document":
-          uploadUrl = `${process.env.REACT_APP_BACKEND}/lbd/${context.currentProject.projectId}/files`;
-          bodyFormData.append("file", fileToUpload);
-
+        case "document": 
+          response = await uploadDocument({label: docLabel, file: fileToUpload, description: docDescription}, context.currentProject.id, context.user.token)
+          currentProject = context.currentProject
+          currentProject["documents"][response.uri] = response.metadata
+          setContext({ ...context, currentProject })
           break;
         case "graph":
-          uploadUrl = `${process.env.REACT_APP_BACKEND}/lbd/${context.currentProject.projectId}/graphs`;
-          bodyFormData.append("graph", fileToUpload);
-
+          response = await uploadGraph({label: graphLabel, file: fileToUpload, description: graphDescription}, context.currentProject.id, context.user.token)
+          currentProject = context.currentProject
+          currentProject["graphs"][response.uri] = response.metadata
+          setContext({ ...context, currentProject })
+          break;
+        case "newGraph":
+          response = await uploadGraph({label: graphLabel, description: graphDescription}, context.currentProject.id, context.user.token)
+          currentProject = context.currentProject
+          currentProject["graphs"][response.uri] = response.metadata
+          setContext({ ...context, currentProject })
           break;
         default:
           break;
       }
-      bodyFormData.append("label", label);
-      bodyFormData.append("description", description);
-
-      const options = {
-        method: "post",
-        url: uploadUrl,
-        data: bodyFormData,
-        headers: {
-          Authorization: `Bearer ${context.token}`,
-          "Content-Type": `multipart/form-data; boundary=${bodyFormData._boundary}`,
-        },
-      };
-
-      console.log("options", options);
-      const result = await axios(options);
-
-      console.log("result", result.data);
-
-      let currentProject
-      switch (docType) {
-        case "document":
-          currentProject = context.currentProject
-          console.log('currentProject', currentProject)
-          currentProject["documents"][result.data.url] = parseTTL(result.data.metaGraph)
-          setContext({...context, currentProject})
-          break;
-        case "graph":
-          currentProject = context.currentProject
-          currentProject["graphs"][result.data.url] = parseTTL(result.data.metaGraph)
-          setContext({...context, currentProject})
-          break;
-        default:
-          break;
-      }
-      // let metaUrl = url.parse(result.data.url);
-      // metaUrl = result.data.url.replace(
-      //   `${metaUrl.protocol}//${metaUrl.host}`,
-      //   process.env.REACT_APP_BACKEND
-      // );
-
-      // const getMetaOptions = {
-      //   method: "get",
-      //   url: `${metaUrl}.meta`,
-      //   headers: {
-      //     Authorization: `Bearer ${context.token}`,
-      //   },
-      // };
-
-      // const metaResult = await axios(getMetaOptions);
-      // console.log("metaResult", metaResult);
-      console.log('context', context)
       setLoading(false);
       handleCloseDialog(false);
     } catch (error) {
@@ -199,10 +156,13 @@ export default function BrowserTabs() {
 
   const handleCloseDialog = () => {
     setOpenDialog(false);
-    setLabel("");
-    setDescription("");
+    setDocLabel("");
+    setGraphLabel("");
+    setDocDescription("");
+    setGraphDescription("");
     setFileToUpload("");
   };
+
 
   return (
     <div className={classes.root}>
@@ -227,27 +187,30 @@ export default function BrowserTabs() {
         <TabPanel value={value} index={0} dir={theme.direction}>
           <FormGroup row>
             {context.currentProject &&
-            Object.keys(context.currentProject.documents).length > 0 ? (
-              Object.keys(context.currentProject.documents).map((item, i) => {
-                return (
-                  <FormControlLabel
-                    key={item}
-                    control={
-                      <Switch
-                        id={item}
-                        onChange={handleDocumentSelected}
-                        name="checkedB"
-                        color="primary"
-                        checked={context.activeDocuments.includes(item)}
-                      />
-                    }
-                    label={`${item} (${context.currentProject.documents[item]["rdfs:label"]})`}
-                  />
-                );
-              })
-            ) : (
-              <p>There are no documents in this project yet</p>
-            )}
+              Object.keys(context.currentProject.documents).length > 0 ? (
+                Object.keys(context.currentProject.documents).map((item, i) => {
+                  return (
+                    <Grid item key={item} xs={12}>
+                    <FormControlLabel
+                      key={item}
+                      control={
+                        <Switch
+                          id={item}
+                          onChange={handleDocumentSelected}
+                          name="checkedB"
+                          color="primary"
+                          checked={context.currentProject.activeDocuments.includes(item)}
+                        />
+                      }
+                      label={`${context.currentProject.documents[item]["rdfs:label"]}: ${context.currentProject.documents[item]["rdfs:comment"]}`}
+                    />
+                    </Grid>
+
+                  );
+                })
+              ) : (
+                <p>There are no documents in this project yet</p>
+              )}
           </FormGroup>
           {context.user ? (
             <div>
@@ -283,16 +246,16 @@ export default function BrowserTabs() {
                     margin="dense"
                     id="label"
                     label="Label"
-                    value={label}
-                    onChange={(e) => setLabel(e.target.value)}
+                    value={docLabel}
+                    onChange={(e) => setDocLabel(e.target.value)}
                     fullWidth
                   />
                   <TextField
                     autoFocus
                     margin="dense"
                     id="description"
-                    onChange={(e) => setDescription(e.target.value)}
-                    value={description}
+                    onChange={(e) => setDocDescription(e.target.value)}
+                    value={docDescription}
                     label="Description"
                     fullWidth
                   />
@@ -333,34 +296,37 @@ export default function BrowserTabs() {
               </Dialog>
             </div>
           ) : (
-            <div></div>
-          )}
+              <div></div>
+            )}
         </TabPanel>
 
         <TabPanel value={value} index={1} dir={theme.direction}>
           <FormGroup row>
             {context.currentProject &&
-            Object.keys(context.currentProject.graphs).length > 0 ? (
-              Object.keys(context.currentProject.graphs).map((item, i) => {
-                return (
-                  <FormControlLabel
-                    key={item}
-                    control={
-                      <Switch
-                        id={item}
-                        onChange={handleGraphSelected}
-                        name="checkedB"
-                        color="primary"
-                        checked={context.activeGraphs.includes(item)}
-                      />
-                    }
-                    label={item}
-                  />
-                );
-              })
-            ) : (
-              <p>There are no graphs in this project yet</p>
-            )}
+              Object.keys(context.currentProject.graphs).length > 0 ? (
+                Object.keys(context.currentProject.graphs).map((item, i) => {
+                  return (
+                    <Grid item xs={12}>
+                    <FormControlLabel
+                      key={item}
+                      control={
+                        <Switch
+                          id={item}
+                          onChange={handleGraphSelected}
+                          name="checkedB"
+                          color="primary"
+                          checked={context.currentProject.activeGraphs.includes(item)}
+                        />
+                      }
+                      label={`${context.currentProject.graphs[item]["rdfs:label"]}: ${context.currentProject.graphs[item]["rdfs:comment"]}`}
+                    />
+                    </Grid>
+
+                  );
+                })
+              ) : (
+                <p>There are no graphs in this project yet</p>
+              )}
           </FormGroup>
           {context.user ? (
             <div>
@@ -396,16 +362,16 @@ export default function BrowserTabs() {
                     margin="dense"
                     id="label"
                     label="Label"
-                    value={label}
-                    onChange={(e) => setLabel(e.target.value)}
+                    value={graphLabel}
+                    onChange={(e) => setGraphLabel(e.target.value)}
                     fullWidth
                   />
                   <TextField
                     autoFocus
                     margin="dense"
                     id="description"
-                    onChange={(e) => setDescription(e.target.value)}
-                    value={description}
+                    onChange={(e) => setGraphDescription(e.target.value)}
+                    value={graphDescription}
                     label="Description"
                     fullWidth
                   />
@@ -428,6 +394,22 @@ export default function BrowserTabs() {
                     Cancel
                   </Button>
                   <Button
+                    onClick={(e) => uploadInput(e, "newGraph")}
+                    variant="contained"
+                    color="secondary"
+                    component="span"
+                    startIcon={<CloudUploadIcon fontSize="large" />}
+                    disabled={loading}
+                  >
+                    Create New
+                    {loading && (
+                      <CircularProgress
+                        size={20}
+                        className={classes.progress}
+                      />
+                    )}{" "}
+                  </Button>
+                  <Button
                     onClick={(e) => uploadInput(e, "graph")}
                     variant="contained"
                     color="secondary"
@@ -447,8 +429,8 @@ export default function BrowserTabs() {
               </Dialog>
             </div>
           ) : (
-            <div></div>
-          )}
+              <div></div>
+            )}
         </TabPanel>
       </SwipeableViews>
     </div>

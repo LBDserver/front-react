@@ -9,50 +9,28 @@ import {
   Switch,
 } from "@material-ui/core";
 import useStyles from "@styles";
-import axios from "axios";
 import AppContext from "@context";
 import { Link, Redirect } from "react-router-dom";
-import { setConfig } from "@util/functions";
-import {parse as parseTTL} from '@frogcat/ttl2jsonld'
+import {createProject} from 'lbd-server'
 
-function ProjectSetup(props) {
+function ProjectSetup() {
   const classes = useStyles();
   const { context, setContext } = useContext(AppContext);
   const [projectName, setProjectName] = useState("myFirstProject");
-  const [projectDescription, setProjectDescription] = useState(
-    "This is the description of my first project"
-  );
-  const [projectLabel, setProjectLabel] = useState("LBDserver project");
+  const [projectDescription, setProjectDescription] = useState("This is the description of my first project");
+  // const [projectLabel, setProjectLabel] = useState("LBDserver project");
   const [publicness, setPublicness] = useState(true);
   const [loading, setLoading] = useState(false);
   const [projectCreated, setProjectCreated] = useState(false);
 
   async function submitProject(e) {
     e.preventDefault();
-    setLoading(true);
     try {
-      const data = {
-        title: projectName,
-        description: projectDescription,
-        label: projectLabel,
-        public: publicness,
-      };
-
-      const config = {
-        method: "post",
-        url: `${process.env.REACT_APP_BACKEND}/lbd`,
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${context.token}`,
-        },
-        data: data,
-      };
-
-      const result = await axios(config);
-      console.log("results.data", result.data);
+      setLoading(true);
+      const result = await createProject({title: projectName, description: projectDescription, open: publicness}, context.user.token)
       setLoading(false);
-      setContext({...context, currentProject: {projectId: result.data.id, documents: {}, graphs: {}, projectMeta: parseTTL(result.data.projectGraph)}})
 
+      setContext({...context, currentProject: {...result, activeDocuments: [], activeGraphs: []}})
       setProjectCreated(true)
     } catch (error) {
       console.log("error", error);
@@ -63,12 +41,12 @@ function ProjectSetup(props) {
   return (
     <div>
       {projectCreated ? (
-        <Redirect to="/" />
+        <Redirect to="/project" />
       ) : (
         <Grid container className={classes.form}>
           <Grid item sm />
           <Grid item sm>
-            <Typography variant="h2" className={classes.pageTitle}>
+            <Typography variant="h2" component={"span"} className={classes.pageTitle}>
               Create Project
             </Typography>
             <form onSubmit={(e) => submitProject(e)}>
@@ -79,15 +57,6 @@ function ProjectSetup(props) {
                 className={classes.textField}
                 value={projectName}
                 onChange={(e) => setProjectName(e.target.value)}
-                fullWidth
-              />
-              <TextField
-                id="label"
-                name="label"
-                label="Label"
-                className={classes.textField}
-                value={projectLabel}
-                onChange={(e) => setProjectLabel(e.target.value)}
                 fullWidth
               />
               <TextField

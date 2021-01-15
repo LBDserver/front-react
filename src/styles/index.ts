@@ -1,7 +1,7 @@
 import { makeStyles, fade } from "@material-ui/core/styles";
 
-const drawerWidth = "26%";
-
+export const drawerWidth = "26%";
+const miniDrawerWidth = 60
 
 const useStyles = makeStyles((theme) => ({
   form: {
@@ -103,6 +103,9 @@ const useStyles = makeStyles((theme) => ({
     }),
     zIndex: theme.zIndex.drawer + 1,
   },
+  collapse: {
+    zIndex: theme.zIndex.appBar + 1,
+  },
   appBarShift: {
     width: `calc(100% - ${drawerWidth}px)`,
     marginLeft: drawerWidth,
@@ -116,6 +119,10 @@ const useStyles = makeStyles((theme) => ({
   },
   drawerPaper: {
     width: drawerWidth,
+    marginLeft: miniDrawerWidth,
+  },
+  miniDrawerPaper: {
+    width: miniDrawerWidth,
   },
   drawerHeader: {
     display: "flex",
@@ -140,6 +147,38 @@ const useStyles = makeStyles((theme) => ({
       duration: theme.transitions.duration.enteringScreen,
     }),
     marginLeft: 0,
+  },
+  drawerOpen: {
+    width: drawerWidth,
+    transition: theme.transitions.create("width", {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.enteringScreen,
+    }),
+  },
+  drawerClose: {
+    transition: theme.transitions.create("width", {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.leavingScreen,
+    }),
+    overflowX: "hidden",
+    width: theme.spacing(7) + 1,
+    [theme.breakpoints.up("sm")]: {
+      width: theme.spacing(9) + 1,
+    },
+  },
+  toolbar: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "flex-end",
+    padding: theme.spacing(0, 1),
+    // necessary for content to be below app bar
+    ...theme.mixins.toolbar,
+  },
+  miniDrawer: {
+    width: miniDrawerWidth,
+    flexShrink: 0,
+    whiteSpace: 'nowrap',
+    zIndex: 2
   },
 }));
 
