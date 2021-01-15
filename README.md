@@ -14,6 +14,7 @@
 * The application will be hosted on port 3000. You may find it at http://localhost:3000.
 
 ## Initial project setup
+* NOTE: For the current prototype version, you will need to have a CORS-enabler (plugin) installed in your browser.
 * Create a new user at '/register' (see navbar). A local user will be registered, with a local profile/webId (TBD).
 * You are now authenticated for the current session (don't refresh; at this moment we use an application state, so there are no cookies for a more persistent login (TBD?))
 * Go to '/setup' (using the navbar => again: no persistent login yet that would enable use of your browser url bar) and create a new project, which will be loaded immediately.
@@ -26,3 +27,6 @@
 If all goes well, you should be able to end up with an interactive 3D environment like the one below:
 
 ![screenshot](img/screenshot.png "Screenshot of working interface for the TU Eindhoven Atlas building")
+
+* By default, unauthenticated agents have read access (you can change this at setup or later). So the guid of your active project can actually be used by other people to read project data. If you store it for later use, or you're comfortable using MongoDB or GraphDB GUIs.
+
