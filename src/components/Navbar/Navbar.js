@@ -5,7 +5,7 @@ import AppContext from "@context";
 import { makeStyles, fade } from "@material-ui/core/styles";
 import CloseIcon from "@material-ui/icons/Close";
 import { checkAuthentication } from "@util/functions";
-import { logout } from "lbd-server";
+import { logout as logoutLBD } from "lbd-server";
 
 const useStyles = makeStyles({
   title: {
@@ -19,7 +19,7 @@ const Navbar = () => {
 
   function closeProject(e) {
     e.preventDefault();
-    setContext({ ...context, currentProject: undefined });
+    setContext({ ...context, currentProject: null });
   }
 
   const notLoggedIn = (
@@ -45,8 +45,8 @@ const Navbar = () => {
   );
 
   async function logout(e) {
-    await logout(context.user.token);
-    setContext({ ...context, user: null });
+    await logoutLBD(context.user.token);
+    setContext({ ...context, user: null, currentProject: null });
   }
 
 

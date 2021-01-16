@@ -14,15 +14,17 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Switch from "@material-ui/core/Switch";
 import Button from "@material-ui/core/Button";
 import CloudUploadIcon from "@material-ui/icons/CloudUpload";
-import { CircularProgress, Grid } from "@material-ui/core"
+import { CircularProgress, Grid } from "@material-ui/core";
 import TextField from "@material-ui/core/TextField";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
-import { parse } from '@frogcat/ttl2jsonld'
-import {uploadDocument, uploadGraph} from 'lbd-server'
+import { parse } from "@frogcat/ttl2jsonld";
+import { uploadDocument, uploadGraph } from "lbd-server";
+import CloseIcon from "@material-ui/icons/Close";
+import DeleteDialog from "@components/UtilComponents/DeleteDialog";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -74,8 +76,12 @@ export default function BrowserTabs() {
   const [docLabel, setDocLabel] = useState("gltf");
   const [docDescription, setDocDescription] = useState("This is a gltf file");
   const [graphLabel, setGraphLabel] = useState("topology");
-  const [graphDescription, setGraphDescription] = useState("The topology of the building");
+  const [graphDescription, setGraphDescription] = useState(
+    "The topology of the building"
+  );
   const [loading, setLoading] = useState(false);
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const [deleteResource, setDeleteResource] = useState(null);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -93,8 +99,10 @@ export default function BrowserTabs() {
     } else {
       activeDocuments.push(e.target.id);
     }
-    setContext({ ...context, currentProject: {...context.currentProject, activeDocuments} });
-
+    setContext({
+      ...context,
+      currentProject: { ...context.currentProject, activeDocuments },
+    });
   };
 
   const handleGraphSelected = (e) => {
@@ -105,13 +113,14 @@ export default function BrowserTabs() {
     } else {
       activeGraphs = activeGraphs.filter((item) => item !== e.target.id);
     }
-    setContext({ ...context, currentProject: {...context.currentProject, activeGraphs} });
-
+    setContext({
+      ...context,
+      currentProject: { ...context.currentProject, activeGraphs },
+    });
   };
 
   function handleInput(e) {
     e.preventDefault();
-    console.log(typeof e.target.files[0])
     setFileToUpload(e.target.files[0]);
   }
 
@@ -119,25 +128,45 @@ export default function BrowserTabs() {
     e.preventDefault();
     setLoading(true);
     try {
-      let response, currentProject
+      let response, currentProject;
       switch (docType) {
-        case "document": 
-          response = await uploadDocument({label: docLabel, file: fileToUpload, description: docDescription}, context.currentProject.id, context.user.token)
-          currentProject = context.currentProject
-          currentProject["documents"][response.uri] = response.metadata
-          setContext({ ...context, currentProject })
+        case "document":
+          response = await uploadDocument(
+            {
+              label: docLabel,
+              file: fileToUpload,
+              description: docDescription,
+            },
+            context.currentProject.id,
+            context.user.token
+          );
+          currentProject = context.currentProject;
+          currentProject["documents"][response.uri] = response;
+          setContext({ ...context, currentProject });
           break;
         case "graph":
-          response = await uploadGraph({label: graphLabel, file: fileToUpload, description: graphDescription}, context.currentProject.id, context.user.token)
-          currentProject = context.currentProject
-          currentProject["graphs"][response.uri] = response.metadata
-          setContext({ ...context, currentProject })
+          response = await uploadGraph(
+            {
+              label: graphLabel,
+              file: fileToUpload,
+              description: graphDescription,
+            },
+            context.currentProject.id,
+            context.user.token
+          );
+          currentProject = context.currentProject;
+          currentProject["graphs"][response.uri] = response;
+          setContext({ ...context, currentProject });
           break;
         case "newGraph":
-          response = await uploadGraph({label: graphLabel, description: graphDescription}, context.currentProject.id, context.user.token)
-          currentProject = context.currentProject
-          currentProject["graphs"][response.uri] = response.metadata
-          setContext({ ...context, currentProject })
+          response = await uploadGraph(
+            { label: graphLabel, description: graphDescription },
+            context.currentProject.id,
+            context.user.token
+          );
+          currentProject = context.currentProject;
+          currentProject["graphs"][response.uri] = response;
+          setContext({ ...context, currentProject });
           break;
         default:
           break;
@@ -163,6 +192,45 @@ export default function BrowserTabs() {
     setFileToUpload("");
   };
 
+  function handleOpenDeleteDialog(item) {
+    setDeleteResource(item);
+    setOpenDeleteDialog(true);
+  }
+
+  function handleCloseDeleteDialog() {
+    setOpenDeleteDialog(false);
+    setDeleteResource(null);
+  }
+
+  function handleDeleteDocument(uri) {
+    const activeDocuments = context.currentProject.activeDocuments.filter(
+      (resource) => {
+        return resource !== uri;
+      }
+    );
+    const documents = context.currentProject.documents;
+    delete documents[uri];
+    setContext({
+      ...context,
+      currentProject: { ...context.currentProject, activeDocuments, documents },
+    });
+    setDeleteResource(null);
+  }
+
+  function handleDeleteGraph(uri) {
+    const activeGraphs = context.currentProject.activeDocuments.filter(
+      (resource) => {
+        return resource !== uri;
+      }
+    );
+    const graphs = context.currentProject.graphs;
+    delete graphs[uri];
+    setContext({
+      ...context,
+      currentProject: { ...context.currentProject, activeGraphs, graphs },
+    });
+    setDeleteResource(null);
+  }
 
   return (
     <div className={classes.root}>
@@ -187,30 +255,69 @@ export default function BrowserTabs() {
         <TabPanel value={value} index={0} dir={theme.direction}>
           <FormGroup row>
             {context.currentProject &&
-              Object.keys(context.currentProject.documents).length > 0 ? (
-                Object.keys(context.currentProject.documents).map((item, i) => {
-                  return (
+            Object.keys(context.currentProject.documents).length > 0 ? (
+              Object.keys(context.currentProject.documents).map((item, i) => {
+                console.log(
+                  "context.currentProject.documents[item]",
+                  context.currentProject.documents[item]
+                );
+                return (
+                  <div>
                     <Grid item key={item} xs={12}>
-                    <FormControlLabel
-                      key={item}
-                      control={
-                        <Switch
-                          id={item}
-                          onChange={handleDocumentSelected}
-                          name="checkedB"
-                          color="primary"
-                          checked={context.currentProject.activeDocuments.includes(item)}
+                      <FormControlLabel
+                        key={item}
+                        control={
+                          <Switch
+                            id={item}
+                            onChange={handleDocumentSelected}
+                            name="checkedB"
+                            color="primary"
+                            checked={context.currentProject.activeDocuments.includes(
+                              item
+                            )}
+                          />
+                        }
+                        label={`${context.currentProject.documents[item].metadata["rdfs:label"]}: ${context.currentProject.documents[item].metadata["rdfs:comment"]}`}
+                      />
+                      {context.currentProject.documents[
+                        item
+                      ].permissions.includes(
+                        "http://www.w3.org/ns/auth/acl#Control"
+                      ) ? (
+                        <Button
+                          color="secondary"
+                          startIcon={
+                            <CloseIcon
+                              fontSize="large"
+                              style={{
+                                marginLeft: -25,
+                                marginBottom: 15,
+                              }}
+                            />
+                          }
+                          onClick={() => handleOpenDeleteDialog(item)}
                         />
-                      }
-                      label={`${context.currentProject.documents[item].metadata["rdfs:label"]}: ${context.currentProject.documents[item].metadata["rdfs:comment"]}`}
-                    />
+                      ) : (
+                        <></>
+                      )}
                     </Grid>
-
-                  );
-                })
-              ) : (
-                <p>There are no documents in this project yet</p>
-              )}
+                    {openDeleteDialog ? (
+                      <DeleteDialog
+                        type="document"
+                        uri={deleteResource}
+                        onClose={handleCloseDeleteDialog}
+                        open={openDeleteDialog}
+                        onDelete={handleDeleteDocument}
+                      />
+                    ) : (
+                      <></>
+                    )}
+                  </div>
+                );
+              })
+            ) : (
+              <p>There are no documents in this project yet</p>
+            )}
           </FormGroup>
           {context.user ? (
             <div>
@@ -296,37 +403,72 @@ export default function BrowserTabs() {
               </Dialog>
             </div>
           ) : (
-              <div></div>
-            )}
+            <div></div>
+          )}
         </TabPanel>
 
         <TabPanel value={value} index={1} dir={theme.direction}>
           <FormGroup row>
             {context.currentProject &&
-              Object.keys(context.currentProject.graphs).length > 0 ? (
-                Object.keys(context.currentProject.graphs).map((item, i) => {
-                  return (
+            Object.keys(context.currentProject.graphs).length > 0 ? (
+              Object.keys(context.currentProject.graphs).map((item, i) => {
+                return (
+                  <div>
                     <Grid item xs={12}>
-                    <FormControlLabel
-                      key={item}
-                      control={
-                        <Switch
-                          id={item}
-                          onChange={handleGraphSelected}
-                          name="checkedB"
-                          color="primary"
-                          checked={context.currentProject.activeGraphs.includes(item)}
+                      <FormControlLabel
+                        key={item}
+                        control={
+                          <Switch
+                            id={item}
+                            onChange={handleGraphSelected}
+                            name="checkedB"
+                            color="primary"
+                            checked={context.currentProject.activeGraphs.includes(
+                              item
+                            )}
+                          />
+                        }
+                        label={`${context.currentProject.graphs[item].metadata["rdfs:label"]}: ${context.currentProject.graphs[item].metadata["rdfs:comment"]}`}
+                      />
+                      {context.currentProject.graphs[
+                        item
+                      ].permissions.includes(
+                        "http://www.w3.org/ns/auth/acl#Control"
+                      ) ? (
+                        <Button
+                          color="secondary"
+                          startIcon={
+                            <CloseIcon
+                              fontSize="large"
+                              style={{
+                                marginLeft: -25,
+                                marginBottom: 15,
+                              }}
+                            />
+                          }
+                          onClick={() => handleOpenDeleteDialog(item)}
                         />
-                      }
-                      label={`${context.currentProject.graphs[item].metadata["rdfs:label"]}: ${context.currentProject.graphs[item].metadata["rdfs:comment"]}`}
-                    />
+                      ) : (
+                        <></>
+                      )}
                     </Grid>
-
-                  );
-                })
-              ) : (
-                <p>There are no graphs in this project yet</p>
-              )}
+                    {openDeleteDialog ? (
+                      <DeleteDialog
+                        type="graph"
+                        uri={deleteResource}
+                        onClose={handleCloseDeleteDialog}
+                        open={openDeleteDialog}
+                        onDelete={handleDeleteGraph}
+                      />
+                    ) : (
+                      <></>
+                    )}
+                  </div>
+                );
+              })
+            ) : (
+              <p>There are no graphs in this project yet</p>
+            )}
           </FormGroup>
           {context.user ? (
             <div>
@@ -429,8 +571,8 @@ export default function BrowserTabs() {
               </Dialog>
             </div>
           ) : (
-              <div></div>
-            )}
+            <div></div>
+          )}
         </TabPanel>
       </SwipeableViews>
     </div>
