@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import SwipeableViews from "react-swipeable-views";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 import axios from "axios";
-import AppBar from "@material-ui/core/AppBar";
+import {AppBar, List, ListItem} from "@material-ui/core";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import Typography from "@material-ui/core/Typography";
@@ -254,16 +254,13 @@ export default function BrowserTabs() {
       >
         <TabPanel value={value} index={0} dir={theme.direction}>
           <FormGroup row>
+            <List dense>
             {context.currentProject &&
             Object.keys(context.currentProject.documents).length > 0 ? (
               Object.keys(context.currentProject.documents).map((item, i) => {
-                console.log(
-                  "context.currentProject.documents[item]",
-                  context.currentProject.documents[item]
-                );
                 return (
-                  <div>
-                    <Grid item key={item} xs={12}>
+                  <div key={item}>
+                    <ListItem>
                       <FormControlLabel
                         key={item}
                         control={
@@ -300,7 +297,7 @@ export default function BrowserTabs() {
                       ) : (
                         <></>
                       )}
-                    </Grid>
+                    </ListItem>
                     {openDeleteDialog ? (
                       <DeleteDialog
                         type="document"
@@ -318,6 +315,8 @@ export default function BrowserTabs() {
             ) : (
               <p>There are no documents in this project yet</p>
             )}
+            </List>
+
           </FormGroup>
           {context.user ? (
             <div>
@@ -409,49 +408,50 @@ export default function BrowserTabs() {
 
         <TabPanel value={value} index={1} dir={theme.direction}>
           <FormGroup row>
+            <List dense>
             {context.currentProject &&
             Object.keys(context.currentProject.graphs).length > 0 ? (
               Object.keys(context.currentProject.graphs).map((item, i) => {
                 return (
-                  <div>
-                    <Grid item xs={12}>
-                      <FormControlLabel
-                        key={item}
-                        control={
-                          <Switch
-                            id={item}
-                            onChange={handleGraphSelected}
-                            name="checkedB"
-                            color="primary"
-                            checked={context.currentProject.activeGraphs.includes(
-                              item
-                            )}
-                          />
-                        }
-                        label={`${context.currentProject.graphs[item].metadata["rdfs:label"]}: ${context.currentProject.graphs[item].metadata["rdfs:comment"]}`}
-                      />
-                      {context.currentProject.graphs[
-                        item
-                      ].permissions.includes(
-                        "http://www.w3.org/ns/auth/acl#Control"
-                      ) ? (
-                        <Button
-                          color="secondary"
-                          startIcon={
-                            <CloseIcon
-                              fontSize="large"
-                              style={{
-                                marginLeft: -25,
-                                marginBottom: 15,
-                              }}
+                  <div key={item}>
+                    <ListItem>
+                    <FormControlLabel
+                          control={
+                            <Switch
+                              id={item}
+                              onChange={handleGraphSelected}
+                              name="checkedB"
+                              color="primary"
+                              checked={context.currentProject.activeGraphs.includes(
+                                item
+                              )}
                             />
                           }
-                          onClick={() => handleOpenDeleteDialog(item)}
+                          label={`${context.currentProject.graphs[item].metadata["rdfs:label"]}: ${context.currentProject.graphs[item].metadata["rdfs:comment"]}`}
                         />
-                      ) : (
-                        <></>
-                      )}
-                    </Grid>
+                        {context.currentProject.graphs[
+                          item
+                        ].permissions.includes(
+                          "http://www.w3.org/ns/auth/acl#Control"
+                        ) ? (
+                          <Button
+                            color="secondary"
+                            startIcon={
+                              <CloseIcon
+                                fontSize="large"
+                                style={{
+                                  marginLeft: -25,
+                                  marginBottom: 15,
+                                }}
+                              />
+                            }
+                            onClick={() => handleOpenDeleteDialog(item)}
+                          />
+                        ) : (
+                          <></>
+                        )}
+                    </ListItem>
+
                     {openDeleteDialog ? (
                       <DeleteDialog
                         type="graph"
@@ -469,6 +469,7 @@ export default function BrowserTabs() {
             ) : (
               <p>There are no graphs in this project yet</p>
             )}
+            </List>
           </FormGroup>
           {context.user ? (
             <div>
