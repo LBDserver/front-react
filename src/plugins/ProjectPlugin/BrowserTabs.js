@@ -3,7 +3,8 @@ import PropTypes from "prop-types";
 import SwipeableViews from "react-swipeable-views";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 import axios from "axios";
-import {AppBar, List, ListItem} from "@material-ui/core";
+import { AppBar, List, ListItem, Snackbar } from "@material-ui/core";
+import MuiAlert from "@material-ui/lab/Alert";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import Typography from "@material-ui/core/Typography";
@@ -21,10 +22,10 @@ import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
-import { parse } from "@frogcat/ttl2jsonld";
 import { uploadDocument, uploadGraph } from "lbd-server";
 import CloseIcon from "@material-ui/icons/Close";
 import DeleteDialog from "@components/UtilComponents/DeleteDialog";
+import IFCDialog from "./DialogComponent";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -82,6 +83,8 @@ export default function BrowserTabs() {
   const [loading, setLoading] = useState(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [deleteResource, setDeleteResource] = useState(null);
+  const [ifcDialog, setIfcDialog] = useState(false);
+  const [error, setError] = useState(null);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -232,8 +235,45 @@ export default function BrowserTabs() {
     setDeleteResource(null);
   }
 
+  function handleOpenUploadIFC(e) {
+    setIfcDialog(true);
+  }
+
+  function handleCloseUploadIFC(err, lbd, gltf) {
+    if (err) {
+      setError(err.message);
+    } else {
+      const currentProject = context.currentProject;
+      currentProject.documents[gltf.uri] = gltf;
+      currentProject.graphs[lbd.uri] = lbd;
+      setContext({ ...context, currentProject });
+    }
+    setIfcDialog(false);
+  }
+
+  const handleErrorClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setError(null);
+  };
+
   return (
     <div className={classes.root}>
+      {error ? (
+        <Snackbar
+          open={error}
+          autoHideDuration={6000}
+          onClose={handleErrorClose}
+        >
+          <Alert onClose={handleErrorClose} severity="error">
+            {error}
+          </Alert>
+        </Snackbar>
+      ) : (
+        <></>
+      )}
       <AppBar position="static" color="default">
         <Tabs
           value={value}
@@ -255,68 +295,67 @@ export default function BrowserTabs() {
         <TabPanel value={value} index={0} dir={theme.direction}>
           <FormGroup row>
             <List dense>
-            {context.currentProject &&
-            Object.keys(context.currentProject.documents).length > 0 ? (
-              Object.keys(context.currentProject.documents).map((item, i) => {
-                return (
-                  <div key={item}>
-                    <ListItem>
-                      <FormControlLabel
-                        key={item}
-                        control={
-                          <Switch
-                            id={item}
-                            onChange={handleDocumentSelected}
-                            name="checkedB"
-                            color="primary"
-                            checked={context.currentProject.activeDocuments.includes(
-                              item
-                            )}
-                          />
-                        }
-                        label={`${context.currentProject.documents[item].metadata["rdfs:label"]}: ${context.currentProject.documents[item].metadata["rdfs:comment"]}`}
-                      />
-                      {context.currentProject.documents[
-                        item
-                      ].permissions.includes(
-                        "http://www.w3.org/ns/auth/acl#Control"
-                      ) ? (
-                        <Button
-                          color="secondary"
-                          startIcon={
-                            <CloseIcon
-                              fontSize="large"
-                              style={{
-                                marginLeft: -25,
-                                marginBottom: 15,
-                              }}
+              {context.currentProject &&
+              Object.keys(context.currentProject.documents).length > 0 ? (
+                Object.keys(context.currentProject.documents).map((item, i) => {
+                  return (
+                    <div key={item}>
+                      <ListItem>
+                        <FormControlLabel
+                          key={item}
+                          control={
+                            <Switch
+                              id={item}
+                              onChange={handleDocumentSelected}
+                              name="checkedB"
+                              color="primary"
+                              checked={context.currentProject.activeDocuments.includes(
+                                item
+                              )}
                             />
                           }
-                          onClick={() => handleOpenDeleteDialog(item)}
+                          label={`${context.currentProject.documents[item].metadata["rdfs:label"]}: ${context.currentProject.documents[item].metadata["rdfs:comment"]}`}
+                        />
+                        {context.currentProject.documents[
+                          item
+                        ].permissions.includes(
+                          "http://www.w3.org/ns/auth/acl#Control"
+                        ) ? (
+                          <Button
+                            color="secondary"
+                            startIcon={
+                              <CloseIcon
+                                fontSize="large"
+                                style={{
+                                  marginLeft: -25,
+                                  marginBottom: 15,
+                                }}
+                              />
+                            }
+                            onClick={() => handleOpenDeleteDialog(item)}
+                          />
+                        ) : (
+                          <></>
+                        )}
+                      </ListItem>
+                      {openDeleteDialog ? (
+                        <DeleteDialog
+                          type="document"
+                          uri={deleteResource}
+                          onClose={handleCloseDeleteDialog}
+                          open={openDeleteDialog}
+                          onDelete={handleDeleteDocument}
                         />
                       ) : (
                         <></>
                       )}
-                    </ListItem>
-                    {openDeleteDialog ? (
-                      <DeleteDialog
-                        type="document"
-                        uri={deleteResource}
-                        onClose={handleCloseDeleteDialog}
-                        open={openDeleteDialog}
-                        onDelete={handleDeleteDocument}
-                      />
-                    ) : (
-                      <></>
-                    )}
-                  </div>
-                );
-              })
-            ) : (
-              <p>There are no documents in this project yet</p>
-            )}
+                    </div>
+                  );
+                })
+              ) : (
+                <p>There are no documents in this project yet</p>
+              )}
             </List>
-
           </FormGroup>
           {context.user ? (
             <div>
@@ -409,13 +448,13 @@ export default function BrowserTabs() {
         <TabPanel value={value} index={1} dir={theme.direction}>
           <FormGroup row>
             <List dense>
-            {context.currentProject &&
-            Object.keys(context.currentProject.graphs).length > 0 ? (
-              Object.keys(context.currentProject.graphs).map((item, i) => {
-                return (
-                  <div key={item}>
-                    <ListItem>
-                    <FormControlLabel
+              {context.currentProject &&
+              Object.keys(context.currentProject.graphs).length > 0 ? (
+                Object.keys(context.currentProject.graphs).map((item, i) => {
+                  return (
+                    <div key={item}>
+                      <ListItem>
+                        <FormControlLabel
                           control={
                             <Switch
                               id={item}
@@ -450,25 +489,25 @@ export default function BrowserTabs() {
                         ) : (
                           <></>
                         )}
-                    </ListItem>
+                      </ListItem>
 
-                    {openDeleteDialog ? (
-                      <DeleteDialog
-                        type="graph"
-                        uri={deleteResource}
-                        onClose={handleCloseDeleteDialog}
-                        open={openDeleteDialog}
-                        onDelete={handleDeleteGraph}
-                      />
-                    ) : (
-                      <></>
-                    )}
-                  </div>
-                );
-              })
-            ) : (
-              <p>There are no graphs in this project yet</p>
-            )}
+                      {openDeleteDialog ? (
+                        <DeleteDialog
+                          type="graph"
+                          uri={deleteResource}
+                          onClose={handleCloseDeleteDialog}
+                          open={openDeleteDialog}
+                          onDelete={handleDeleteGraph}
+                        />
+                      ) : (
+                        <></>
+                      )}
+                    </div>
+                  );
+                })
+              ) : (
+                <p>There are no graphs in this project yet</p>
+              )}
             </List>
           </FormGroup>
           {context.user ? (
@@ -576,6 +615,28 @@ export default function BrowserTabs() {
           )}
         </TabPanel>
       </SwipeableViews>
+      {context.user && context.user.token ? (
+        <div>
+          <Button
+            style={{ bottom: 30, right: 30, position: "absolute" }}
+            color="primary"
+            onClick={handleOpenUploadIFC}
+            variant="outlined"
+            color="primary"
+            component="span"
+            startIcon={<CloudUploadIcon fontSize="large" />}
+          >
+            Convert IFC
+          </Button>
+          <IFCDialog open={ifcDialog} onClose={handleCloseUploadIFC} />
+        </div>
+      ) : (
+        <></>
+      )}
     </div>
   );
+}
+
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
 }
