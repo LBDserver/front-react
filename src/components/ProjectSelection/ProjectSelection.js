@@ -13,6 +13,7 @@ const ProjectSelection = () => {
     data: publicProjectData,
     refetch: refetchPublic,
   } = useQuery("publicProjects", getOpenProjects);
+  
   const {
     isLoading: isLoading,
     data: myProjectData,

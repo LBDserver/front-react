@@ -13,7 +13,7 @@ import axios from "axios";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { newEngine } from "@comunica/actor-init-sparql";
 
-const theme = createMuiTheme(themeFile);
+const theme = createMuiTheme(themeFile); 
 const queryClient = new QueryClient();
 
 function App() {

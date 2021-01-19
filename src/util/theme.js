@@ -30,6 +30,12 @@ const theme = {
   progress: {
     position: "absolute",
   },
+  overrides: {
+    MuiSlider: {
+      rail: {
+        backGroundColor: "blue"
+      }
+    }}
 };
 
 export default theme;

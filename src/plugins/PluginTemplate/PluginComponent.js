@@ -1,7 +1,33 @@
 import React, { useContext, useState } from "react";
-import { Drawer, Typography } from "@material-ui/core";
-import useStyles from "@styles";
+import { Drawer, Typography, Slider } from "@material-ui/core";
+// import useStyles from "@styles";
+import { makeStyles } from '@material-ui/core/styles';
 import AppContext from "@context";
+import {miniDrawerWidth} from '@styles'
+
+const drawerWidth = "26%"
+const useStyles = makeStyles((theme) => ({
+  root: {
+    display: "flex",
+  },
+  drawer: {
+    width: drawerWidth,
+    flexShrink: 0,
+    zIndex: 1,
+  },
+  drawerPaper: {
+    width: drawerWidth,
+    marginLeft: miniDrawerWidth,
+  },
+  drawerHeader: {
+    display: "flex",
+    alignItems: "center",
+    padding: theme.spacing(0, 1),
+    // necessary for content to be below app bar
+    ...theme.mixins.toolbar,
+    justifyContent: "flex-end",
+  }
+}));
 
 export default function MyPlugin() {
   const classes = useStyles();
@@ -27,6 +53,7 @@ export default function MyPlugin() {
           >
             <div className={classes.drawerHeader}></div>
             <div>
+
               <Typography>This is my plugin window!</Typography>
               <Typography>
                 Current selection:

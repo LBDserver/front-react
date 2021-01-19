@@ -624,7 +624,7 @@ export default function BrowserTabs() {
             variant="outlined"
             color="primary"
             component="span"
-            startIcon={<CloudUploadIcon fontSize="large" />}
+            startIcon={<CloudUploadIcon fontSize="large" />} 
           >
             Convert IFC
           </Button>
