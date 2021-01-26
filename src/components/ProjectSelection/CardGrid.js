@@ -12,8 +12,6 @@ const useStyles = makeStyles((theme) => ({
 
 const CardGrid = (props) => {
   const classes = useStyles();
-  console.log(props.projects)
-
   return (
     <Grid container className={classes.root} spacing={2}>
       <Grid item xs={12}>

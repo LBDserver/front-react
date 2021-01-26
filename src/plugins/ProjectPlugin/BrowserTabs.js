@@ -2,30 +2,13 @@ import React, { useContext, useState } from "react";
 import PropTypes from "prop-types";
 import SwipeableViews from "react-swipeable-views";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
-import axios from "axios";
-import { AppBar, List, ListItem, Snackbar } from "@material-ui/core";
+import { AppBar, List, ListItem, Snackbar, Button, Switch, FormGroup, Box, Tab, Tabs, Typography, FormControlLabel } from "@material-ui/core";
 import MuiAlert from "@material-ui/lab/Alert";
-import Tabs from "@material-ui/core/Tabs";
-import Tab from "@material-ui/core/Tab";
-import Typography from "@material-ui/core/Typography";
-import Box from "@material-ui/core/Box";
-import AppContext from "@context";
-import FormGroup from "@material-ui/core/FormGroup";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Switch from "@material-ui/core/Switch";
-import Button from "@material-ui/core/Button";
 import CloudUploadIcon from "@material-ui/icons/CloudUpload";
-import { CircularProgress, Grid } from "@material-ui/core";
-import TextField from "@material-ui/core/TextField";
-import Dialog from "@material-ui/core/Dialog";
-import DialogActions from "@material-ui/core/DialogActions";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogContentText from "@material-ui/core/DialogContentText";
-import DialogTitle from "@material-ui/core/DialogTitle";
-import { uploadDocument, uploadGraph } from "lbd-server";
 import CloseIcon from "@material-ui/icons/Close";
 import DeleteDialog from "@components/UtilComponents/DeleteDialog";
-import IFCDialog from "./DialogComponent";
+import UploadDialog from "./DialogComponent";
+import AppContext from "@context";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -72,18 +55,9 @@ export default function BrowserTabs() {
   const classes = useStyles();
   const theme = useTheme();
   const [value, setValue] = useState(0);
-  const [openDialog, setOpenDialog] = useState(false);
-  const [fileToUpload, setFileToUpload] = useState();
-  const [docLabel, setDocLabel] = useState("gltf");
-  const [docDescription, setDocDescription] = useState("This is a gltf file");
-  const [graphLabel, setGraphLabel] = useState("topology");
-  const [graphDescription, setGraphDescription] = useState(
-    "The topology of the building"
-  );
-  const [loading, setLoading] = useState(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [deleteResource, setDeleteResource] = useState(null);
-  const [ifcDialog, setIfcDialog] = useState(false);
+  const [uploadDialog, setUploadDialog] = useState(false);
   const [error, setError] = useState(null);
 
   const handleChange = (event, newValue) => {
@@ -120,79 +94,6 @@ export default function BrowserTabs() {
       ...context,
       currentProject: { ...context.currentProject, activeGraphs },
     });
-  };
-
-  function handleInput(e) {
-    e.preventDefault();
-    setFileToUpload(e.target.files[0]);
-  }
-
-  async function uploadInput(e, docType) {
-    e.preventDefault();
-    setLoading(true);
-    try {
-      let response, currentProject;
-      switch (docType) {
-        case "document":
-          response = await uploadDocument(
-            {
-              label: docLabel,
-              file: fileToUpload,
-              description: docDescription,
-            },
-            context.currentProject.id,
-            context.user.token
-          );
-          currentProject = context.currentProject;
-          currentProject["documents"][response.uri] = response;
-          setContext({ ...context, currentProject });
-          break;
-        case "graph":
-          response = await uploadGraph(
-            {
-              label: graphLabel,
-              file: fileToUpload,
-              description: graphDescription,
-            },
-            context.currentProject.id,
-            context.user.token
-          );
-          currentProject = context.currentProject;
-          currentProject["graphs"][response.uri] = response;
-          setContext({ ...context, currentProject });
-          break;
-        case "newGraph":
-          response = await uploadGraph(
-            { label: graphLabel, description: graphDescription },
-            context.currentProject.id,
-            context.user.token
-          );
-          currentProject = context.currentProject;
-          currentProject["graphs"][response.uri] = response;
-          setContext({ ...context, currentProject });
-          break;
-        default:
-          break;
-      }
-      setLoading(false);
-      handleCloseDialog(false);
-    } catch (error) {
-      console.log("error", error);
-      handleCloseDialog(false);
-    }
-  }
-
-  const handleOpenDialog = () => {
-    setOpenDialog(true);
-  };
-
-  const handleCloseDialog = () => {
-    setOpenDialog(false);
-    setDocLabel("");
-    setGraphLabel("");
-    setDocDescription("");
-    setGraphDescription("");
-    setFileToUpload("");
   };
 
   function handleOpenDeleteDialog(item) {
@@ -235,27 +136,21 @@ export default function BrowserTabs() {
     setDeleteResource(null);
   }
 
-  function handleOpenUploadIFC(e) {
-    setIfcDialog(true);
+  function handleOpenUpload(type) {
+    setUploadDialog(type);
   }
 
-  function handleCloseUploadIFC(err, lbd, gltf) {
+  function handleCloseUpload(err) {
     if (err) {
       setError(err.message);
-    } else {
-      const currentProject = context.currentProject;
-      currentProject.documents[gltf.uri] = gltf;
-      currentProject.graphs[lbd.uri] = lbd;
-      setContext({ ...context, currentProject });
     }
-    setIfcDialog(false);
+    setUploadDialog(null);
   }
 
   const handleErrorClose = (event, reason) => {
     if (reason === "clickaway") {
       return;
     }
-
     setError(null);
   };
 
@@ -360,7 +255,7 @@ export default function BrowserTabs() {
           {context.user ? (
             <div>
               <Button
-                onClick={handleOpenDialog}
+                onClick={() => handleOpenUpload("document")}
                 variant="contained"
                 color="secondary"
                 component="span"
@@ -374,71 +269,7 @@ export default function BrowserTabs() {
               >
                 Upload
               </Button>
-              <Dialog
-                open={openDialog}
-                onClose={handleCloseDialog}
-                aria-labelledby="form-dialog-title"
-              >
-                <DialogTitle id="form-dialog-title">
-                  Upload non-RDF documents
-                </DialogTitle>
-                <DialogContent>
-                  <DialogContentText>
-                    Upload a document to the current project
-                  </DialogContentText>
-                  <TextField
-                    autoFocus
-                    margin="dense"
-                    id="label"
-                    label="Label"
-                    value={docLabel}
-                    onChange={(e) => setDocLabel(e.target.value)}
-                    fullWidth
-                  />
-                  <TextField
-                    autoFocus
-                    margin="dense"
-                    id="description"
-                    onChange={(e) => setDocDescription(e.target.value)}
-                    value={docDescription}
-                    label="Description"
-                    fullWidth
-                  />
-                </DialogContent>
-                <input
-                  display="none"
-                  className={classes.input}
-                  id="contained-button-file"
-                  multiple
-                  type="file"
-                  onChange={handleInput}
-                  style={{
-                    margin: "20px",
-                    marginTop: "20px",
-                  }}
-                />
-                <DialogActions>
-                  <Button onClick={handleCloseDialog} color="primary">
-                    Cancel
-                  </Button>
-                  <Button
-                    onClick={(e) => uploadInput(e, "document")}
-                    variant="contained"
-                    color="secondary"
-                    component="span"
-                    startIcon={<CloudUploadIcon fontSize="large" />}
-                    disabled={!fileToUpload || loading}
-                  >
-                    Upload
-                    {loading && (
-                      <CircularProgress
-                        size={20}
-                        className={classes.progress}
-                      />
-                    )}{" "}
-                  </Button>
-                </DialogActions>
-              </Dialog>
+              <UploadDialog open={(uploadDialog === "document") ? true : false} onClose={handleCloseUpload} text={{title: "Upload a non-RDF resource", content: "Upload a document to the current project."}} type="document" accept="*"/>
             </div>
           ) : (
             <div></div>
@@ -513,7 +344,7 @@ export default function BrowserTabs() {
           {context.user ? (
             <div>
               <Button
-                onClick={handleOpenDialog}
+                onClick={() => handleOpenUpload("graph")}
                 variant="contained"
                 color="secondary"
                 component="span"
@@ -527,88 +358,7 @@ export default function BrowserTabs() {
               >
                 Upload
               </Button>
-              <Dialog
-                open={openDialog}
-                onClose={handleCloseDialog}
-                aria-labelledby="form-dialog-title"
-              >
-                <DialogTitle id="form-dialog-title">
-                  Upload RDF graphs
-                </DialogTitle>
-                <DialogContent>
-                  <DialogContentText>
-                    Upload an RDF graph to the current project
-                  </DialogContentText>
-                  <TextField
-                    autoFocus
-                    margin="dense"
-                    id="label"
-                    label="Label"
-                    value={graphLabel}
-                    onChange={(e) => setGraphLabel(e.target.value)}
-                    fullWidth
-                  />
-                  <TextField
-                    autoFocus
-                    margin="dense"
-                    id="description"
-                    onChange={(e) => setGraphDescription(e.target.value)}
-                    value={graphDescription}
-                    label="Description"
-                    fullWidth
-                  />
-                </DialogContent>
-                <input
-                  display="none"
-                  className={classes.input}
-                  id="contained-button-file"
-                  multiple
-                  accept=".ttl, .rdf"
-                  type="file"
-                  onChange={handleInput}
-                  style={{
-                    margin: "20px",
-                    marginTop: "20px",
-                  }}
-                />
-                <DialogActions>
-                  <Button onClick={handleCloseDialog} color="primary">
-                    Cancel
-                  </Button>
-                  <Button
-                    onClick={(e) => uploadInput(e, "newGraph")}
-                    variant="contained"
-                    color="secondary"
-                    component="span"
-                    startIcon={<CloudUploadIcon fontSize="large" />}
-                    disabled={loading}
-                  >
-                    Create New
-                    {loading && (
-                      <CircularProgress
-                        size={20}
-                        className={classes.progress}
-                      />
-                    )}{" "}
-                  </Button>
-                  <Button
-                    onClick={(e) => uploadInput(e, "graph")}
-                    variant="contained"
-                    color="secondary"
-                    component="span"
-                    startIcon={<CloudUploadIcon fontSize="large" />}
-                    disabled={!fileToUpload || loading}
-                  >
-                    Upload
-                    {loading && (
-                      <CircularProgress
-                        size={20}
-                        className={classes.progress}
-                      />
-                    )}{" "}
-                  </Button>
-                </DialogActions>
-              </Dialog>
+              <UploadDialog open={(uploadDialog === "graph") ? true : false} onClose={handleCloseUpload} text={{title: "Upload an RDF graph", content: "Upload an RDF graph to the current project or create an empty graph"}} type="graph" accept=".ttl, .rdf"/>
             </div>
           ) : (
             <div></div>
@@ -620,7 +370,7 @@ export default function BrowserTabs() {
           <Button
             style={{ bottom: 30, right: 30, position: "absolute" }}
             color="primary"
-            onClick={handleOpenUploadIFC}
+            onClick={() => handleOpenUpload("ifc")}
             variant="outlined"
             color="primary"
             component="span"
@@ -628,7 +378,7 @@ export default function BrowserTabs() {
           >
             Convert IFC
           </Button>
-          <IFCDialog open={ifcDialog} onClose={handleCloseUploadIFC} />
+          <UploadDialog open={(uploadDialog === "ifc") ? true : false} onClose={handleCloseUpload} text={{title: "Upload an IFC file", content: "Upload an IFC file to the LBDserver.  It will split up in an RDF graph and a glTF geometric file."}} type="ifc" accept=".ifc"/>
         </div>
       ) : (
         <></>
