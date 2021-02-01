@@ -1,4 +1,5 @@
 import {IReturnProject, IReturnUser} from "lbd-server"
+import {Session} from '@inrupt/solid-client-authn-browser'
 
 interface CurrentProject extends IReturnProject {
     activeGraphs: string[],
@@ -6,14 +7,18 @@ interface CurrentProject extends IReturnProject {
 }
 
 interface IContext {
-    user: IReturnUser | null,
+    user: IReturnUser | ISolidUser | null,
     currentProject: CurrentProject | null,
-    states: IPluginState[],
+    states: IObject[],
     plugin: string | null,
     selection: ISelection[]
 }
 
-interface IPluginState {
+interface ISolidUser {
+    session: Session
+}
+
+interface IObject {
     [x: string]: any
 }
 

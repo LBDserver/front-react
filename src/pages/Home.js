@@ -1,12 +1,14 @@
-import React from 'react'
+import React, {useContext} from 'react'
 import useStyles from "@styles";
 import {
     Typography
 } from '@material-ui/core'
 import {ProjectSelection} from '@components'
+import AppContext from '@context'
 
 function Home() {
     const classes = useStyles()
+    const {context, setContext} = useContext(AppContext)
 
     return (
         <div className={classes.form}>

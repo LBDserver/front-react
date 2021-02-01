@@ -2,7 +2,7 @@ import axios from 'axios'
 import url from 'url'
 
 function checkAuthentication(context) {
-  if (context.user && context.user.token) {
+  if (context.user) {
     return true
   } else {
     return false

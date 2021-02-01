@@ -15,7 +15,7 @@ const ProjectSelection = () => {
   } = useQuery("publicProjects", getOpenProjects);
   
   const {
-    isLoading: isLoading,
+    isLoading,
     data: myProjectData,
     refetch: refetchPersonal,
   } = useQuery("myProjects", () => getUserProjects(context.user.token), {
@@ -24,13 +24,15 @@ const ProjectSelection = () => {
 
   let projects = getProjects()
 
-  useEffect(async () => {
-    await refetchPublic();
-    if (context.user) {
-      await refetchPersonal();
+  useEffect(() => {
+    async function refetch() {
+      await refetchPublic();
+      if (context.user) {
+        await refetchPersonal();
+      }
+      projects = getProjects()
     }
-    projects = getProjects()
-
+    refetch()
   }, [context.user]);
 
   function getProjects() {
