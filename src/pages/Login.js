@@ -10,7 +10,6 @@ import useStyles from "@styles";
 import AppContext from '@context'
 import {Link} from 'react-router-dom'
 import {login} from "lbd-server"
-import {Session} from '@inrupt/solid-client-authn-browser'
 
 function Login(props: any) {
   const classes = useStyles()
@@ -20,23 +19,20 @@ function Login(props: any) {
   const [loginError, setLoginError] = useState();
   const [loading, setLoading] = useState(false);
   const [loadingSession, setLoadingSession] = useState(false);
-  const [session, setSession] = useState(new Session())
 
   useEffect(() => {
     async function processSession() {
+      setLoadingSession(true)
       const authCode = new URL(window.location.href).searchParams.get("code");
       if (authCode) {
-        setLoading(true)
-        console.log("Being redirected from the IdP");
-        await session.handleIncomingRedirect(window.location.href)
-        console.log(session.info.webId)
-        setLoadingSession(false)
-        setContext({...context, user: {session}})
+        await context.user.handleIncomingRedirect(window.location.href)
+        setContext({...context})
       }
     }
     processSession()
+    setLoadingSession(false)
+  }, [context, setContext]);
 
-  }, [session]);
 
   async function submitLogin(e) {
       e.preventDefault()
@@ -53,7 +49,7 @@ function Login(props: any) {
 
   async function loginOIDC(e) {
     e.preventDefault()
-    await session.login({
+    await context.user.login({
       oidcIssuer: 'https://broker.pod.inrupt.com',
       redirectUrl: window.location.href,
     });

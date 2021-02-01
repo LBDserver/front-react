@@ -11,7 +11,9 @@ import {
 import useStyles from "@styles";
 import AppContext from "@context";
 import { Link, Redirect } from "react-router-dom";
-import {createProject} from 'lbd-server'
+import {createProject, uploadMetadataGraph, uploadResource} from 'lbd-server'
+import * as templates from '../templates'
+import {parse} from '@frogcat/ttl2jsonld'
 
 function ProjectSetup() {
   const classes = useStyles();
@@ -27,10 +29,23 @@ function ProjectSetup() {
     e.preventDefault();
     try {
       setLoading(true);
-      const result = await createProject({title: projectName, description: projectDescription, open: publicness}, context.user.token)
+
+      const stakeholders = [{uri: context.user.info.webId, type: "http://www.w3.org/ns/auth/acl#agent", permissions: ["http://www.w3.org/ns/auth/acl#Read", "http://www.w3.org/ns/auth/acl#Write", "http://www.w3.org/ns/auth/acl#Append", "http://www.w3.org/ns/auth/acl#Control"]}]
+
+      if (publicness) {
+        stakeholders.push({
+          uri: "http://xmlns.com/foaf/0.1/Agent", type: "http://www.w3.org/ns/auth/acl#agentClass", permissions: ["http://www.w3.org/ns/auth/acl#Read"]
+        })
+      }
+
+      const project = await createProject(stakeholders, context.user)
+      const metadataTemplate = templates.namedGraphMeta(project.uri, projectName, projectDescription)
+      
+      await uploadMetadataGraph(project.uri + ".props", metadataTemplate, {mimeType: "text/turtle"}, context.user)
+      console.log('metadataTemplate', metadataTemplate)
       setLoading(false);
 
-      setContext({...context, currentProject: {...result, activeDocuments: [], activeGraphs: []}})
+      setContext({...context, currentProject: {...project, metadata: parse(metadataTemplate), activeDocuments: [], activeGraphs: []}})
       setProjectCreated(true)
     } catch (error) {
       console.log("error", error);

@@ -5,8 +5,8 @@ import AppContext from "@context";
 import { makeStyles, fade } from "@material-ui/core/styles";
 import CloseIcon from "@material-ui/icons/Close";
 import { checkAuthentication } from "@util/functions";
-import { logout as logoutLBD } from "lbd-server";
-
+import { login, logout as logoutLBD } from "lbd-server";
+import {Session} from '@inrupt/solid-client-authn-browser'
 const useStyles = makeStyles({
   title: {
     fontSize: 14,
@@ -16,20 +16,29 @@ const useStyles = makeStyles({
 const Navbar = () => {
   const classes = useStyles();
   const { context, setContext } = useContext(AppContext);
-
   function closeProject(e) {
     e.preventDefault();
     setContext({ ...context, currentProject: null });
   }
 
+  async function loginOIDC(e) {
+    e.preventDefault()
+    try {
+      let session = await login("https://broker.pod.inrupt.com", window.location.href, context.user)
+      setContext({...context, session})
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   const notLoggedIn = (
     <div>
-      <Button color="inherit" component={Link} to="/login">
+      <Button color="inherit" onClick={loginOIDC}>
         Login
       </Button>
-      <Button color="inherit" component={Link} to="/register">
+      {/* <Button color="inherit" component={Link} to="/register">
         Register
-      </Button>
+      </Button> */}
     </div>
   );
 
@@ -38,15 +47,16 @@ const Navbar = () => {
       <Button color="inherit" component={Link} to="/projectsetup">
         Setup
       </Button>
-      <Button color="inherit" onClick={logout} component={Link} to="/">
+      <Button color="inherit" onClick={logout}>
         Logout
       </Button>
     </div>
   );
 
   async function logout(e) {
-    await logoutLBD(context.user.token);
-    setContext({ ...context, user: null, currentProject: null });
+    e.preventDefault()
+    await logoutLBD(context.user);
+    setContext({ ...context, user: new Session(), currentProject: null });
   }
 
 

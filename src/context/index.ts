@@ -1,12 +1,14 @@
+import {Session} from '@inrupt/solid-client-authn-browser'
 import {createContext} from 'react'
 import {IContext} from "../interfaces/contextInterface"
 
 export const initialState: IContext = {
- user: null,
+ user: new Session(),
  currentProject: null,
  states: [{"project": {}}],
  plugin: "project",
- selection: []
+ selection: [],
+ error: null
 }
 
 const initialContext = {

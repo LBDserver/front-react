@@ -7,15 +7,12 @@ interface CurrentProject extends IReturnProject {
 }
 
 interface IContext {
-    user: IReturnUser | ISolidUser | null,
+    user: IReturnUser | Session | null,
     currentProject: CurrentProject | null,
     states: IObject[],
     plugin: string | null,
-    selection: ISelection[]
-}
-
-interface ISolidUser {
-    session: Session
+    selection: ISelection[],
+    error: Error | null
 }
 
 interface IObject {

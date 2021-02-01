@@ -2,7 +2,8 @@ import axios from 'axios'
 import url from 'url'
 
 function checkAuthentication(context) {
-  if (context.user) {
+  if (context.user.info.webId) {
+    console.log('context.user.info.webId', context.user.info.webId)
     return true
   } else {
     return false

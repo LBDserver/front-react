@@ -3,7 +3,7 @@ import AppContext from "@context";
 import { TextField, Button, Grid } from "@material-ui/core";
 import SearchIcon from "@material-ui/icons/Search";
 import {translate, toSparql} from 'sparqlalgebrajs'
-import {queryMultiple} from 'lbd-server'
+import {query} from 'lbd-server'
 
 const initialQuery = `PREFIX props: <https://w3id.org/props#>
 PREFIX bot: <https://w3id.org/bot#>
@@ -38,7 +38,7 @@ function QuerySparql() {
           if (context.user && context.user.token) {
             token = context.user.token
           }
-            const results = await queryMultiple(context.currentProject.id, query, context.currentProject.activeGraphs, token)
+            const results = await query(context.currentProject.id, query, context.currentProject.activeGraphs, token)
 
             const selection = []
             results.results.bindings.forEach((binding) => {
