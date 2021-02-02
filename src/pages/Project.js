@@ -15,6 +15,7 @@ import Viewer from "@components/GeometryComponent/LBDviewer";
 import url from "url";
 import Plugins from "../plugins";
 import {drawerWidth} from '@styles'
+import {parse} from '@frogcat/ttl2jsonld'
 
 function Project(props) {
   const { context, setContext } = useContext(AppContext);
@@ -24,20 +25,14 @@ function Project(props) {
   function checkGLTFselection() {
     const gltfChecked = [];
     context.currentProject.activeDocuments.forEach((doc) => {
-      if (context.currentProject.documents[doc].metadata["rdfs:label"] === "gltf") {
-        const fullUrl = url.parse(doc);
-        const realDocUrl = doc.replace(
-          `${fullUrl.protocol}//${fullUrl.host}`,
-          process.env.REACT_APP_BACKEND
-        );
-        gltfChecked.push(realDocUrl);
+      if (parse(context.currentProject.documents[doc].metadata)["rdfs:label"] === "gltf") {
+        gltfChecked.push(doc);
       }
     });
     return gltfChecked;
   }
 
   function onSelect(guids) {
-    console.log("selected elements", guids);
     setContext({ ...context, selection: guids });
   }
 

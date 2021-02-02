@@ -20,16 +20,16 @@ const DeleteDialog = (props) => {
       setLoading(true);
       switch (props.type) {
         case "project":
-          await deleteProject(props.uri, context.user.token);
+          await deleteProject(props.uri, context.user);
           props.onDelete(props.uri)
           break;
         case "document":
             console.log('deleting document', props.uri)
-            await deleteDocument(props.uri, context.token)
+            await deleteDocument(props.uri, context.user)
             props.onDelete(props.uri)
           break;
         case "graph":
-            await deleteGraph(props.uri, context.token)
+            await deleteGraph(props.uri, context.user)
             props.onDelete(props.uri)
           break;
         default:
@@ -38,8 +38,7 @@ const DeleteDialog = (props) => {
       setLoading(false);
       props.onClose();
     } catch (error) {
-        throw error
-      setError(error.message);
+        setContext({...context, error})
     }
   }
   return (

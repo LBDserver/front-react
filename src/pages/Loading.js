@@ -15,8 +15,6 @@ function Loading() {
       if (authCode) {
         await context.user.handleIncomingRedirect(window.location.href);
         await setContext({ ...context, user: context.user });
-      } else {
-          console.log('no authcode')
       }
       setLoading(false);
     }

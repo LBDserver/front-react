@@ -7,6 +7,7 @@ import CloseIcon from "@material-ui/icons/Close";
 import { checkAuthentication } from "@util/functions";
 import { login, logout as logoutLBD } from "lbd-server";
 import {Session} from '@inrupt/solid-client-authn-browser'
+import {parse} from "@frogcat/ttl2jsonld"
 const useStyles = makeStyles({
   title: {
     fontSize: 14,
@@ -76,7 +77,7 @@ const Navbar = () => {
               to="/project"
             >
               <Typography style={{ marginRight: 5 }} variant="h6" noWrap>
-                {context.currentProject.metadata["rdfs:label"]}
+                {parse(context.currentProject.metadata)["rdfs:label"]}
               </Typography>
             </Link>
 

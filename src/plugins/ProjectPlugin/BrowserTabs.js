@@ -9,6 +9,7 @@ import CloseIcon from "@material-ui/icons/Close";
 import DeleteDialog from "@components/UtilComponents/DeleteDialog";
 import UploadDialog from "./DialogComponent";
 import AppContext from "@context";
+import {parse} from '@frogcat/ttl2jsonld'
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -209,7 +210,7 @@ export default function BrowserTabs() {
                               )}
                             />
                           }
-                          label={`${context.currentProject.documents[item].metadata["rdfs:label"]}: ${context.currentProject.documents[item].metadata["rdfs:comment"]}`}
+                          label={`${parse(context.currentProject.documents[item].metadata)["rdfs:label"]}: ${parse(context.currentProject.documents[item].metadata)["rdfs:comment"]}`}
                         />
                         {context.currentProject.documents[
                           item
@@ -252,7 +253,7 @@ export default function BrowserTabs() {
               )}
             </List>
           </FormGroup>
-          {context.user ? (
+          {context.currentProject.permissions.includes("http://www.w3.org/ns/auth/acl#Write") ? (
             <div>
               <Button
                 onClick={() => handleOpenUpload("document")}
@@ -297,7 +298,7 @@ export default function BrowserTabs() {
                               )}
                             />
                           }
-                          label={`${context.currentProject.graphs[item].metadata["rdfs:label"]}: ${context.currentProject.graphs[item].metadata["rdfs:comment"]}`}
+                          label={`${parse(context.currentProject.graphs[item].metadata)["rdfs:label"]}: ${parse(context.currentProject.graphs[item].metadata)["rdfs:comment"]}`}
                         />
                         {context.currentProject.graphs[
                           item
@@ -341,7 +342,7 @@ export default function BrowserTabs() {
               )}
             </List>
           </FormGroup>
-          {context.user ? (
+          {context.currentProject.permissions.includes("http://www.w3.org/ns/auth/acl#Write") ? (
             <div>
               <Button
                 onClick={() => handleOpenUpload("graph")}
@@ -365,14 +366,13 @@ export default function BrowserTabs() {
           )}
         </TabPanel>
       </SwipeableViews>
-      {context.user && context.user.token ? (
+      {context.currentProject.permissions.includes("http://www.w3.org/ns/auth/acl#Write") ? (
         <div>
           <Button
             style={{ bottom: 30, right: 30, position: "absolute" }}
             color="primary"
             onClick={() => handleOpenUpload("ifc")}
             variant="outlined"
-            color="primary"
             component="span"
             startIcon={<CloudUploadIcon fontSize="large" />} 
           >

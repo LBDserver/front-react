@@ -35,10 +35,8 @@ const ProjectSelection = () => {
   useEffect(() => {
     async function refetch() {
       await refetchPublic();
-      console.log('publicProjectData', publicProjectData)
       if (checkAuthentication(context)) {
         await refetchPersonal();
-        console.log('myProjectData', myProjectData)
       }
       projects = getProjects()
     }

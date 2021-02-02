@@ -15,6 +15,8 @@ import { convertIFC } from "./functions";
 import { uploadDocument, uploadGraph } from "lbd-server";
 import AppContext from "@context";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
+import { v4 } from "uuid";
+import { namedGraphMeta } from "../../templates";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -74,15 +76,12 @@ const DialogComponent = (props) => {
 
   async function uploadNamedGraphToServer() {
     try {
-      const response = await uploadGraph(
-        {
-          label,
-          file: fileToUpload,
-          description,
-        },
-        context.currentProject.id,
-        context.user.token
-      );
+      const data = Buffer.from(await fileToUpload.arrayBuffer())
+      const uri = context.currentProject.uri + '/graphs/' + fileToUpload.name
+      const metadata = namedGraphMeta(uri, label, description)
+
+      const response = await uploadGraph(uri, data, metadata, {}, context.user);
+      console.log('response', response)
       const currentProject = context.currentProject;
       currentProject["graphs"][response.uri] = response;
       setContext({ ...context, currentProject });
@@ -95,11 +94,11 @@ const DialogComponent = (props) => {
 
   async function uploadNewGraphToServer() {
     try {
-      const response = await uploadGraph(
-        { label, description },
-        context.currentProject.id,
-        context.user.token
-      );
+      const uri = context.currentProject.uri + '/graphs/' + v4() + '.ttl'
+      const metadata = namedGraphMeta(uri, label, description)
+
+      const response = await uploadGraph(uri, '', metadata, {}, context.user);
+      console.log('response', response)
       const currentProject = context.currentProject;
       currentProject["graphs"][response.uri] = response;
       setContext({ ...context, currentProject });
@@ -112,15 +111,12 @@ const DialogComponent = (props) => {
 
   async function uploadDocumentToServer() {
     try {
-      const response = await uploadDocument(
-        {
-          label,
-          file: fileToUpload,
-          description,
-        },
-        context.currentProject.id,
-        context.user.token
-      );
+      const data = Buffer.from(await fileToUpload.arrayBuffer())
+      const uri = context.currentProject.uri + '/files/' + fileToUpload.name
+      const metadata = namedGraphMeta(uri, label, description)
+
+      const response = await uploadDocument(uri, data, metadata, {}, context.user);
+      console.log('response', response)
       const currentProject = context.currentProject;
       currentProject["documents"][response.uri] = response;
       setContext({ ...context, currentProject });
