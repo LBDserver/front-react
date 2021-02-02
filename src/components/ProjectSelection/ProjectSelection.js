@@ -4,6 +4,7 @@ import { useQuery } from "react-query";
 import { Loading } from "../UtilComponents";
 import CardGrid from "./CardGrid";
 import AppContext from "@context";
+import {checkAuthentication} from '@util/functions'
 
 const ProjectSelection = () => {
   const { context, setContext } = useContext(AppContext);
@@ -18,17 +19,26 @@ const ProjectSelection = () => {
     isLoading,
     data: myProjectData,
     refetch: refetchPersonal,
-  } = useQuery("myProjects", () => getUserProjects(context.user.token), {
-    enabled: Boolean(context.user),
+  } = useQuery("myProjects", () => getUserProjects(context.user), {
+    enabled: checkAuthentication(context),
   });
 
   let projects = getProjects()
 
+
+  async function fetchPub(e) {
+    e.preventDefault()
+    const projs = await getOpenProjects()
+    console.log('projs', projs)
+  }
+
   useEffect(() => {
     async function refetch() {
       await refetchPublic();
-      if (context.user) {
+      console.log('publicProjectData', publicProjectData)
+      if (checkAuthentication(context)) {
         await refetchPersonal();
+        console.log('myProjectData', myProjectData)
       }
       projects = getProjects()
     }
@@ -68,7 +78,7 @@ const ProjectSelection = () => {
   }
 
   return (
-    <div>
+    <div style={{marginTop: 100}}>
       {publicIsLoading || isLoading ? (
         <Loading />
       ) : (

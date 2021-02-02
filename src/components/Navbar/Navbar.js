@@ -24,8 +24,8 @@ const Navbar = () => {
   async function loginOIDC(e) {
     e.preventDefault()
     try {
-      let session = await login("https://broker.pod.inrupt.com", window.location.href, context.user)
-      setContext({...context, session})
+      let session = await login("https://broker.pod.inrupt.com", 'http://localhost:3001/redirect', context.user)
+      await setContext({...context, session})
     } catch (error) {
       console.log(error)
     }

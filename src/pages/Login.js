@@ -51,7 +51,7 @@ function Login(props: any) {
     e.preventDefault()
     await context.user.login({
       oidcIssuer: 'https://broker.pod.inrupt.com',
-      redirectUrl: window.location.href,
+      redirectUrl: "http://localhost:3001/login",
     });
   }
 

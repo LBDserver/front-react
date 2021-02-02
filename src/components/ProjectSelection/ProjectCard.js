@@ -9,8 +9,7 @@ import { makeStyles } from '@material-ui/core/styles'
 import AppContext from '@context'
 import {Redirect} from 'react-router-dom'
 import DeleteDialog from '../UtilComponents/DeleteDialog'
-import { useQuery } from "react-query";
-import {getOneProject} from 'lbd-server'
+import {parse} from '@frogcat/ttl2jsonld'
 
 const useStyles = makeStyles({
     card: {
@@ -57,10 +56,10 @@ const ProjectCard = (props) => {
                         {(props.project.open) ? "public" : "owner"}
                     </Typography>
                     <Typography variant="h5" component="h2">
-                        {props.project.metadata["rdfs:label"]}
+                        {parse(props.project.metadata)["rdfs:label"]}
                     </Typography>
                     <Typography variant="body2" component="p">
-                        {props.project.metadata["rdfs:comment"]}
+                        {parse(props.project.metadata)["rdfs:comment"]}
                     </Typography>
                 </CardContent>
 

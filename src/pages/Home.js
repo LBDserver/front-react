@@ -48,7 +48,7 @@ function Home() {
             <></>
           )}
 
-          {/* <ProjectSelection/> */}
+          <ProjectSelection/>
         </div>
     )
 }

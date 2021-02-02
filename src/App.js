@@ -1,4 +1,4 @@
-import { Register, Login, Project, ProjectSetup, Home } from "./pages";
+import { Register, Login, Project, ProjectSetup, Home, Loading } from "./pages";
 
 import { Navbar } from "@components";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
@@ -22,18 +22,18 @@ const queryClient = new QueryClient();
 function App() {
   const [context, setContext] = useState(initialState);
 
-  useEffect(() => {
-      async function process() {
-        try {
-          const session = await processSession(context.user)
-          setContext({...context, user: session})
-        } catch (error) {
-          console.log('error.message', error.message)
-          setContext({...context, error})
-        }
-      }
-      process()
-  }, [context.user]);
+  // useEffect(() => {
+  //     async function process() {
+  //       try {
+  //         const session = await processSession(context.user)
+  //         setContext({...context, user: session})
+  //       } catch (error) {
+  //         console.log('error.message', error.message)
+  //         setContext({...context, error})
+  //       }
+  //     }
+  //     process()
+  // }, [context.user]);
 
 
 
@@ -54,7 +54,9 @@ function App() {
             <Switch>
               <Route exact path="/" component={Home} />
               <Route exact path="/project" component={Project} />
+              <Route exact path="/redirect" component={Loading} />
               <AuthRoute exact path="/projectsetup" component={ProjectSetup} />
+              
               {/* <NonAuthRoute exact path="/register" component={Register} /> */}
               {/* <NonAuthRoute exact path="/login" component={Login} /> */}
             </Switch>

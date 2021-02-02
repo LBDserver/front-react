@@ -30,8 +30,8 @@ function ProjectSetup() {
     try {
       setLoading(true);
 
-      const stakeholders = [{uri: context.user.info.webId, type: "http://www.w3.org/ns/auth/acl#agent", permissions: ["http://www.w3.org/ns/auth/acl#Read", "http://www.w3.org/ns/auth/acl#Write", "http://www.w3.org/ns/auth/acl#Append", "http://www.w3.org/ns/auth/acl#Control"]}]
-
+      const stakeholders = [{uri: context.user.info.webId, type: "http://www.w3.org/ns/auth/acl#agent", permissions: ["http://www.w3.org/ns/auth/acl#Read", "http://www.w3.org/ns/auth/acl#Write", "http://www.w3.org/ns/auth/acl#Append", "http://www.w3.org/ns/auth/acl#Control"], roles: ['http://lbdserver.org/vocabulary/Owner']}]
+ 
       if (publicness) {
         stakeholders.push({
           uri: "http://xmlns.com/foaf/0.1/Agent", type: "http://www.w3.org/ns/auth/acl#agentClass", permissions: ["http://www.w3.org/ns/auth/acl#Read"]
@@ -42,10 +42,9 @@ function ProjectSetup() {
       const metadataTemplate = templates.namedGraphMeta(project.uri, projectName, projectDescription)
       
       await uploadMetadataGraph(project.uri + ".props", metadataTemplate, {mimeType: "text/turtle"}, context.user)
-      console.log('metadataTemplate', metadataTemplate)
       setLoading(false);
 
-      setContext({...context, currentProject: {...project, metadata: parse(metadataTemplate), activeDocuments: [], activeGraphs: []}})
+      await setContext({...context, currentProject: {...project, metadata: parse(metadataTemplate), activeDocuments: [], activeGraphs: []}})
       setProjectCreated(true)
     } catch (error) {
       console.log("error", error);
@@ -90,13 +89,13 @@ function ProjectSetup() {
                 control={
                   <Switch
                     id={"privpub"}
-                    onChange={(e) => setPublicness(!publicness)}
+                    onChange={(e) => setPublicness(true)}
                     name="checkedB"
                     color="primary"
-                    checked={publicness}
+                    checked={true}
                   />
                 }
-                label={"Make this project public"}
+                label={"Make this project public (READ) (fixed until private projects can be fetched)"}
               />
               <br />
               <Button
