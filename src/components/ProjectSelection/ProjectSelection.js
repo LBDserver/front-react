@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from "react";
-import { getOpenProjects, getUserProjects } from "lbd-server";
+import { getOpenProjects, getUserProjects } from "lbd-solid";
 import { useQuery } from "react-query";
 import { Loading } from "../UtilComponents";
 import CardGrid from "./CardGrid";

@@ -1,4 +1,4 @@
-import {IReturnProject, IReturnUser} from "lbd-server"
+import {IReturnProject, IReturnUser} from "lbd-solid"
 import {Session} from '@inrupt/solid-client-authn-browser'
 
 interface CurrentProject extends IReturnProject {

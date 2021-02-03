@@ -3,7 +3,7 @@ import AppContext from "@context";
 import { TextField, Button, Grid } from "@material-ui/core";
 import SearchIcon from "@material-ui/icons/Search";
 import {translate, toSparql} from 'sparqlalgebrajs'
-import {query as queryLBD} from 'lbd-server'
+import {query as queryLBD} from 'lbd-solid'
 
 const initialQuery = `PREFIX props: <https://w3id.org/props#>
 PREFIX bot: <https://w3id.org/bot#>

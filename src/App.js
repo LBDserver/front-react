@@ -14,7 +14,7 @@ import { QueryClient, QueryClientProvider } from "react-query";
 import { newEngine } from "@comunica/actor-init-sparql";
 import {Snackbar} from '@material-ui/core'
 import MuiAlert from "@material-ui/lab/Alert";
-import {processSession} from "lbd-server"
+import {processSession} from "lbd-solid"
 
 const theme = createMuiTheme(themeFile); 
 const queryClient = new QueryClient();

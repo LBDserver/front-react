@@ -5,7 +5,7 @@ import AppContext from "@context";
 import { makeStyles, fade } from "@material-ui/core/styles";
 import CloseIcon from "@material-ui/icons/Close";
 import { checkAuthentication } from "@util/functions";
-import { login, logout as logoutLBD } from "lbd-server";
+import { login, logout as logoutLBD } from "lbd-solid";
 import {Session} from '@inrupt/solid-client-authn-browser'
 import {parse} from "@frogcat/ttl2jsonld"
 const useStyles = makeStyles({

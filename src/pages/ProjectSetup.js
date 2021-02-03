@@ -11,7 +11,7 @@ import {
 import useStyles from "@styles";
 import AppContext from "@context";
 import { Link, Redirect } from "react-router-dom";
-import {createProject, uploadMetadataGraph, uploadResource} from 'lbd-server'
+import {createProject, uploadMetadataGraph, uploadResource} from 'lbd-solid'
 import * as templates from '../templates'
 import {parse} from '@frogcat/ttl2jsonld'
 

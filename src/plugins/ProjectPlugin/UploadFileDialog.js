@@ -12,7 +12,7 @@ import {
 import useStyles from "@styles";
 import CloudUploadIcon from "@material-ui/icons/CloudUpload";
 import {convertIFC} from "./functions"
-import {uploadDocument, uploadGraph} from 'lbd-server'
+import {uploadDocument, uploadGraph} from 'lbd-solid'
 import AppContext from '@context'
 
 const UploadFileDialog = (props) => {

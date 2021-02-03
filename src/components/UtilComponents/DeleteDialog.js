@@ -1,5 +1,5 @@
 import React, { useState, useContext } from "react";
-import { deleteGraph, deleteDocument, deleteProject } from "lbd-server";
+import { deleteGraph, deleteDocument, deleteProject } from "lbd-solid";
 import AppContext from "@context";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";

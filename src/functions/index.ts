@@ -1,5 +1,5 @@
 import axios from 'axios'
-import * as API from "lbd-server"
+import * as API from "lbd-solid"
 import * as AXIOS from 'axios'
 import { translate, toSparql } from 'sparqlalgebrajs'
 

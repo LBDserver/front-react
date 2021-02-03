@@ -9,7 +9,7 @@ import {
 import useStyles from "@styles";
 import AppContext from '@context'
 import {Link} from 'react-router-dom'
-import {login} from "lbd-server"
+import {login} from "lbd-solid"
 
 function Login(props: any) {
   const classes = useStyles()
