@@ -34,11 +34,7 @@ function QuerySparql() {
 
     async function executeQuery () {
         try {
-          let token
-          if (context.user && context.user.token) {
-            token = context.user.token
-          }
-            const results = await queryLBD(query, context.currentProject.activeGraphs, context.user)
+          const results = await queryLBD(query, context.currentProject.activeGraphs, context.user)
           console.log('results', results)
             const selection = []
             results.forEach((res) => {

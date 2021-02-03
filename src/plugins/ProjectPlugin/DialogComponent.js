@@ -16,24 +16,23 @@ import { uploadDocument, uploadGraph } from "lbd-server";
 import AppContext from "@context";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 import { v4 } from "uuid";
-import { namedGraphMeta } from "../../templates";
-
+import { namedGraphMeta, documentMeta } from "../../templates";
 
 const useStyles = makeStyles((theme) => ({
   root: {
     backgroundColor: theme.palette.background.paper,
     width: "100%",
-  }
+  },
 }));
 
 const DialogComponent = (props) => {
   const classes = useStyles();
   const { context, setContext } = useContext(AppContext);
   const [fileToUpload, setFileToUpload] = useState(null);
-  const [loading, setLoading] = useState(null);
+  const [loading, setLoading] = useState(false);
   const [docType, setDocType] = useState(null);
-  const [label, setLabel] = useState();
-  const [description, setDescription] = useState();
+  const [label, setLabel] = useState("");
+  const [description, setDescription] = useState("");
   const [uploadType, setUploadType] = useState(props.type);
 
   function handleInput(e) {
@@ -60,30 +59,30 @@ const DialogComponent = (props) => {
         default:
           break;
       }
-      beforeClose()
+      beforeClose();
     } catch (error) {
+      console.log('error', error)
       beforeClose(error);
     }
   }
 
   async function beforeClose(error) {
-    setLabel("")
-    setDescription("")
-    setFileToUpload(null)
+    setLabel("");
+    setDescription("");
+    setFileToUpload(null);
     props.onClose(error);
-
   }
 
   async function uploadNamedGraphToServer() {
     try {
-      const data = Buffer.from(await fileToUpload.arrayBuffer())
-      const uri = context.currentProject.uri + '/graphs/' + fileToUpload.name
-      const metadata = namedGraphMeta(uri, label, description)
+      const data = Buffer.from(await fileToUpload.arrayBuffer());
+      const uri = context.currentProject.uri + "/graphs/" + fileToUpload.name;
+      const metadata = namedGraphMeta(uri, label, description);
 
       const response = await uploadGraph(uri, data, metadata, {}, context.user);
-      console.log('response', response)
+      console.log("response", response);
       const currentProject = context.currentProject;
-      currentProject["graphs"][response.uri] = response;
+      currentProject["graphs"][uri] = response;
       setContext({ ...context, currentProject });
       return;
     } catch (error) {
@@ -94,13 +93,13 @@ const DialogComponent = (props) => {
 
   async function uploadNewGraphToServer() {
     try {
-      const uri = context.currentProject.uri + '/graphs/' + v4() + '.ttl'
-      const metadata = namedGraphMeta(uri, label, description)
+      const uri = context.currentProject.uri + "/graphs/" + v4() + ".ttl";
+      const metadata = namedGraphMeta(uri, label, description);
 
-      const response = await uploadGraph(uri, '', metadata, {}, context.user);
-      console.log('response', response)
+      const response = await uploadGraph(uri, "", metadata, {}, context.user);
+      console.log("response", response);
       const currentProject = context.currentProject;
-      currentProject["graphs"][response.uri] = response;
+      currentProject["graphs"][uri] = response;
       setContext({ ...context, currentProject });
       return;
     } catch (error) {
@@ -111,14 +110,20 @@ const DialogComponent = (props) => {
 
   async function uploadDocumentToServer() {
     try {
-      const data = Buffer.from(await fileToUpload.arrayBuffer())
-      const uri = context.currentProject.uri + '/files/' + fileToUpload.name
-      const metadata = namedGraphMeta(uri, label, description)
+      const data = Buffer.from(await fileToUpload.arrayBuffer());
+      const uri = context.currentProject.uri + "/files/" + fileToUpload.name;
+      const metadata = documentMeta(uri, description, fileToUpload);
 
-      const response = await uploadDocument(uri, data, metadata, {}, context.user);
-      console.log('response', response)
+      const response = await uploadDocument(
+        uri,
+        data,
+        metadata,
+        {},
+        context.user
+      );
+      console.log("response", response);
       const currentProject = context.currentProject;
-      currentProject["documents"][response.uri] = response;
+      currentProject["documents"][uri] = response;
       setContext({ ...context, currentProject });
       return;
     } catch (error) {
@@ -182,15 +187,19 @@ const DialogComponent = (props) => {
         <DialogContent>
           <DialogContentText>{props.text.content}</DialogContentText>
         </DialogContent>
-        <TextField
-          autoFocus
-          margin="dense"
-          id="label"
-          label="Label"
-          value={label}
-          onChange={(e) => setLabel(e.target.value)}
-          style={{marginLeft: 20, marginRight: 20}}
-        />
+        {props.type !== "document" ? (
+          <TextField
+            autoFocus
+            margin="dense"
+            id="label"
+            label="Label"
+            value={label}
+            onChange={(e) => setLabel(e.target.value)}
+            style={{ marginLeft: 20, marginRight: 20 }}
+          />
+        ) : (
+          <></>
+        )}
         <TextField
           autoFocus
           margin="dense"
@@ -198,8 +207,7 @@ const DialogComponent = (props) => {
           onChange={(e) => setDescription(e.target.value)}
           value={description}
           label="Description"
-          style={{marginLeft: 20, marginRight: 20}}
-
+          style={{ marginLeft: 20, marginRight: 20 }}
         />
         <input
           display="none"
@@ -231,7 +239,7 @@ const DialogComponent = (props) => {
           {props.type === "graph" ? (
             <Button
               onClick={(e) => {
-                setUploadType("newGraph")
+                setUploadType("newGraph");
                 uploadInput(e);
               }}
               variant="contained"
@@ -241,9 +249,7 @@ const DialogComponent = (props) => {
               disabled={loading}
             >
               Create New
-              {loading && (
-                <CircularProgress size={20}/>
-              )}{" "}
+              {loading && <CircularProgress size={20} />}{" "}
             </Button>
           ) : (
             <></>

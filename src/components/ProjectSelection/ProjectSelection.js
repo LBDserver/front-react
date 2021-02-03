@@ -13,7 +13,7 @@ const ProjectSelection = () => {
     isLoading: publicIsLoading,
     data: publicProjectData,
     refetch: refetchPublic,
-  } = useQuery("publicProjects", getOpenProjects);
+  } = useQuery("publicProjects", () => getOpenProjects("http://localhost:3000/lbd/"));
   
   const {
     isLoading,
@@ -24,13 +24,6 @@ const ProjectSelection = () => {
   });
 
   let projects = getProjects()
-
-
-  async function fetchPub(e) {
-    e.preventDefault()
-    const projs = await getOpenProjects()
-    console.log('projs', projs)
-  }
 
   useEffect(() => {
     async function refetch() {

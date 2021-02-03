@@ -44,7 +44,7 @@ function ProjectSetup() {
       await uploadMetadataGraph(project.uri + ".props", metadataTemplate, {mimeType: "text/turtle"}, context.user)
       setLoading(false);
 
-      await setContext({...context, currentProject: {...project, metadata: parse(metadataTemplate), activeDocuments: [], activeGraphs: []}})
+      await setContext({...context, currentProject: {...project, metadata: metadataTemplate, activeDocuments: [], activeGraphs: []}})
       setProjectCreated(true)
     } catch (error) {
       console.log("error", error);

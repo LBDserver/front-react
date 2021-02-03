@@ -1,20 +1,11 @@
 import React, { useState, useContext } from "react";
-import {
-  Grid,
-  Typography,
-  TextField,
-  CircularProgress,
-  Button,
-} from "@material-ui/core";
+import {Grid} from "@material-ui/core";
 import withStyles from "@material-ui/core/styles/withStyles";
 import styles from "@styles";
-import axios from "axios";
 import AppContext from "@context";
-import { Link, Redirect } from "react-router-dom";
+import { Redirect } from "react-router-dom";
 import Viewer from "@components/GeometryComponent/LBDviewer";
-import url from "url";
 import Plugins from "../plugins";
-import {drawerWidth} from '@styles'
 import {parse} from '@frogcat/ttl2jsonld'
 
 function Project(props) {
@@ -25,7 +16,7 @@ function Project(props) {
   function checkGLTFselection() {
     const gltfChecked = [];
     context.currentProject.activeDocuments.forEach((doc) => {
-      if (parse(context.currentProject.documents[doc].metadata)["rdfs:label"] === "gltf") {
+      if (parse(context.currentProject.documents[doc].metadata)["rdfs:label"].endsWith(".gltf")) {
         gltfChecked.push(doc);
       }
     });
