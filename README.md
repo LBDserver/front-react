@@ -15,7 +15,7 @@ This version of the LBDserver aims to be Solid compatible, to support federated 
 * The application will be hosted on port 3000. You may find it at http://localhost:3000.
 
 ## Initial project setup
-* Currently, OIDC authentication is limited to an account on [pod.inrupt.com](https://pod.inrupt.com). You can login via the "Login" button on the Navbar, which will redirect you to the OIDC authentication page. After giving the application (temporary) access rights, you will be redirected to the homepage of the LBDserver frontend.
+* Currently, OIDC authentication is limited to an account on [pod.inrupt.com](https://broker.pod.inrupt.com). You can login via the "Login" button on the Navbar, which will redirect you to the OIDC authentication page. After giving the application (temporary) access rights, you will be redirected to the homepage of the LBDserver frontend.
 
 ![screenshot](img/OIDC_approval.png "Screenshot OIDC login using the Inrupt broker")
 
