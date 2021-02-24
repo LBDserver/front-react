@@ -6,6 +6,7 @@ import {
 import {ProjectSelection} from '@components'
 import AppContext from '@context'
 import {getSolidDatasetWithAcl} from '@inrupt/solid-client'
+
 function Home() {
     const classes = useStyles()
     const {context, setContext} = useContext(AppContext)

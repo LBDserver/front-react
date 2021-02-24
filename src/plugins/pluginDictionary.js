@@ -1,9 +1,9 @@
 import ProjectPlugin from "./ProjectPlugin";
-import PluginTemplate from "./PluginTemplate"
+import ClassificationPlugin from "./ClassificationPlugin"
 
 const pluginDictionary = {
     project: ProjectPlugin,
-    template: PluginTemplate,
+    classification: ClassificationPlugin,
     // jeroen: PluginJeroen
     //   stg: StgPlugin
   };
