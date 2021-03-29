@@ -57,10 +57,10 @@ const ProjectCard = (props) => {
                         {(props.project.open) ? "public" : "owner"}
                     </Typography>
                     <Typography variant="h5" component="h2">
-                        {props.project.metadata["rdfs:label"]}
+                        {props.project.metadata["rdfs:label"]["@value"]}
                     </Typography>
                     <Typography variant="body2" component="p">
-                        {props.project.metadata["rdfs:comment"]}
+                        {props.project.metadata["rdfs:comment"]["@value"]}
                     </Typography>
                 </CardContent>
 

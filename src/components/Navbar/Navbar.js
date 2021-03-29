@@ -66,7 +66,7 @@ const Navbar = () => {
               to="/project"
             >
               <Typography style={{ marginRight: 5 }} variant="h6" noWrap>
-                {context.currentProject.metadata["rdfs:label"]}
+                {context.currentProject.metadata["rdfs:label"]["@value"]}
               </Typography>
             </Link>
 

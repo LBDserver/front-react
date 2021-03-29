@@ -24,7 +24,7 @@ function Project(props) {
   function checkGLTFselection() {
     const gltfChecked = [];
     context.currentProject.activeDocuments.forEach((doc) => {
-      if (context.currentProject.documents[doc].metadata["rdfs:label"] === "gltf") {
+      if (context.currentProject.documents[doc].metadata["rdfs:label"]["@value"] === "gltf") {
         const fullUrl = url.parse(doc);
         const realDocUrl = doc.replace(
           `${fullUrl.protocol}//${fullUrl.host}`,

@@ -209,7 +209,7 @@ export default function BrowserTabs() {
                               )}
                             />
                           }
-                          label={`${context.currentProject.documents[item].metadata["rdfs:label"]}: ${context.currentProject.documents[item].metadata["rdfs:comment"]}`}
+                          label={`${context.currentProject.documents[item].metadata["rdfs:label"]["@value"]}: ${context.currentProject.documents[item].metadata["rdfs:comment"]["@value"]}`}
                         />
                         {context.currentProject.documents[
                           item
@@ -297,7 +297,7 @@ export default function BrowserTabs() {
                               )}
                             />
                           }
-                          label={`${context.currentProject.graphs[item].metadata["rdfs:label"]}: ${context.currentProject.graphs[item].metadata["rdfs:comment"]}`}
+                          label={`${context.currentProject.graphs[item].metadata["rdfs:label"]["@value"]}: ${context.currentProject.graphs[item].metadata["rdfs:comment"]["@value"]}`}
                         />
                         {context.currentProject.graphs[
                           item

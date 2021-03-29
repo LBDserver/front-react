@@ -28,6 +28,7 @@ function ProjectSetup() {
     try {
       setLoading(true);
       const result = await createProject({title: projectName, description: projectDescription, open: publicness}, context.user.token)
+      console.log(`result`, result)
       setLoading(false);
 
       setContext({...context, currentProject: {...result, activeDocuments: [], activeGraphs: []}})
