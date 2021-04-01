@@ -1,6 +1,6 @@
 import { makeStyles, fade } from "@material-ui/core/styles";
 
-export const drawerWidth = "26%";
+export const drawerWidth = "40%";
 export const miniDrawerWidth = 60
 
 const useStyles = makeStyles((theme) => ({

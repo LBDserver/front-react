@@ -16,7 +16,7 @@ function Login(props) {
   const classes = useStyles()
   const {context, setContext} = useContext(AppContext)
   const [password, setPassword] = useState("test123");
-  const [email, setEmail] = useState("jeroen.werbrouck@hotmail.com");
+  const [email, setEmail] = useState("jeroen.werbrouck@ugent.be");
   const [loginError, setLoginError] = useState();
   const [loading, setLoading] = useState(false);
 

@@ -8,6 +8,8 @@ import {
   Button,
   CircularProgress,
   DialogContentText,
+  Checkbox,
+  FormControlLabel
 } from "@material-ui/core";
 // import useStyles from "@styles";
 import CloudUploadIcon from "@material-ui/icons/CloudUpload";
@@ -16,12 +18,11 @@ import { uploadDocument, uploadGraph } from "lbd-server";
 import AppContext from "@context";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 
-
 const useStyles = makeStyles((theme) => ({
   root: {
     backgroundColor: theme.palette.background.paper,
     width: "100%",
-  }
+  },
 }));
 
 const DialogComponent = (props) => {
@@ -33,7 +34,7 @@ const DialogComponent = (props) => {
   const [label, setLabel] = useState();
   const [description, setDescription] = useState();
   const [uploadType, setUploadType] = useState(props.type);
-
+  const [convertOmg, setConvertOmg] = useState(false);
   function handleInput(e) {
     e.preventDefault();
     setFileToUpload(e.target.files[0]);
@@ -58,18 +59,17 @@ const DialogComponent = (props) => {
         default:
           break;
       }
-      beforeClose()
+      beforeClose();
     } catch (error) {
       beforeClose(error);
     }
   }
 
   async function beforeClose(error) {
-    setLabel("")
-    setDescription("")
-    setFileToUpload(null)
+    setLabel("");
+    setDescription("");
+    setFileToUpload(null);
     props.onClose(error);
-
   }
 
   async function uploadNamedGraphToServer() {
@@ -123,6 +123,7 @@ const DialogComponent = (props) => {
       );
       const currentProject = context.currentProject;
       currentProject["documents"][response.uri] = response;
+      console.log("currentproject", currentProject);
       setContext({ ...context, currentProject });
       return;
     } catch (error) {
@@ -193,7 +194,7 @@ const DialogComponent = (props) => {
           label="Label"
           value={label}
           onChange={(e) => setLabel(e.target.value)}
-          style={{marginLeft: 20, marginRight: 20}}
+          style={{ marginLeft: 20, marginRight: 20 }}
         />
         <TextField
           autoFocus
@@ -202,9 +203,24 @@ const DialogComponent = (props) => {
           onChange={(e) => setDescription(e.target.value)}
           value={description}
           label="Description"
-          style={{marginLeft: 20, marginRight: 20}}
-
+          style={{ marginLeft: 20, marginRight: 20 }}
         />
+                {props.type === "graph" ? (
+          <FormControlLabel
+          style={{marginBottom: -20}}
+            control={
+              <Checkbox
+              style={{marginLeft: 20}}
+                checked={convertOmg}
+                onChange={() => setConvertOmg(!convertOmg)}
+                label="try OMG/FOG conversion"
+              />
+            }
+            label="Include LBD + OMG/FOG extension"
+          />
+        ) : (
+          <></>
+        )}
         <input
           display="none"
           id="contained-button-file"
@@ -217,6 +233,7 @@ const DialogComponent = (props) => {
             marginTop: "20px",
           }}
         />
+
         <DialogActions>
           <Button onClick={() => beforeClose()} color="primary">
             Cancel
@@ -233,22 +250,22 @@ const DialogComponent = (props) => {
             {loading && <CircularProgress size={20} />}{" "}
           </Button>
           {props.type === "graph" ? (
-            <Button
-              onClick={(e) => {
-                setUploadType("newGraph")
-                uploadInput(e);
-              }}
-              variant="contained"
-              color="secondary"
-              component="span"
-              startIcon={<CloudUploadIcon fontSize="large" />}
-              disabled={loading}
-            >
-              Create New
-              {loading && (
-                <CircularProgress size={20}/>
-              )}{" "}
-            </Button>
+            <div>
+              <Button
+                onClick={(e) => {
+                  setUploadType("newGraph");
+                  uploadInput(e);
+                }}
+                variant="contained"
+                color="secondary"
+                component="span"
+                startIcon={<CloudUploadIcon fontSize="large" />}
+                disabled={loading}
+              >
+                Create New
+                {loading && <CircularProgress size={20} />}{" "}
+              </Button>
+            </div>
           ) : (
             <></>
           )}

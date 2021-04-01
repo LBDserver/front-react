@@ -1,11 +1,11 @@
 import ProjectPlugin from "./ProjectPlugin";
 import PluginTemplate from "./PluginTemplate"
+import STGplugin from "./STGplugin"
 
 const pluginDictionary = {
     project: ProjectPlugin,
     template: PluginTemplate,
-    // jeroen: PluginJeroen
-    //   stg: StgPlugin
+    stg: STGplugin
   };
 
 export default pluginDictionary

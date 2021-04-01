@@ -38,14 +38,18 @@ function Project(props) {
 
   function onSelect(guids) {
     console.log("selected elements", guids);
-    setContext({ ...context, selection: guids });
+    setContext({ ...context, selection: guids});
+  }
+
+  function setScene(scene) {
+    setContext({...context, scene})
   }
 
   return (
     <div>
       {context.currentProject ? (
         <Grid container className={classes.form}>
-                    <Grid xs={3} item>
+                    <Grid xs={4} item>
             <Plugins/>
           </Grid>
           <Grid xs={(context.plugin ? 12 : 12)} item>
@@ -53,6 +57,8 @@ function Project(props) {
             checkGLTFselection().length > 0 ? (
               <div>
                 <Viewer
+                context={context}
+                setScene={setScene}
                   height="96%"
                   width={(context.plugin ? "100%" : "100%")}
                   // width={(context.plugin ? `${100 - parseInt(drawerWidth.substring(0, drawerWidth.length - 1)+80)}%` : "100%")}
