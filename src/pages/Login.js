@@ -15,8 +15,8 @@ import {login} from "lbd-server"
 function Login(props) {
   const classes = useStyles()
   const {context, setContext} = useContext(AppContext)
-  const [password, setPassword] = useState("test123");
-  const [email, setEmail] = useState("jeroen.werbrouck@hotmail.com");
+  const [password, setPassword] = useState("Rubinho4");
+  const [email, setEmail] = useState("ruben.ballegeer@gmail.com");
   const [loginError, setLoginError] = useState();
   const [loading, setLoading] = useState(false);
 

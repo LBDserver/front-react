@@ -10,6 +10,7 @@ import DeleteDialog from "@components/UtilComponents/DeleteDialog";
 import UploadDialog from "./DialogComponent";
 import AppContext from "@context";
 
+
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
 
@@ -267,7 +268,7 @@ export default function BrowserTabs() {
                   width: "120px",
                 }}
               >
-                Upload
+                Upload 
               </Button>
               <UploadDialog open={(uploadDialog === "document") ? true : false} onClose={handleCloseUpload} text={{title: "Upload a non-RDF resource", content: "Upload a document to the current project."}} type="document" accept="*"/>
             </div>
