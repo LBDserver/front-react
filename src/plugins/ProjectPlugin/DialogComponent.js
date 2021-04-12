@@ -160,10 +160,9 @@ const DialogComponent = (props) => {
         context.currentProject.id,
         context.user.token
       );
-
       const currentProject = context.currentProject;
-      currentProject.documents[gltf.uri] = gltf;
-      currentProject.graphs[lbd.uri] = lbd;
+      currentProject.documents[gltfMeta.uri] = gltfMeta;
+      currentProject.graphs[lbdMeta.uri] = lbdMeta;
 
       setContext({ ...context, currentProject });
       setLoading(false);
