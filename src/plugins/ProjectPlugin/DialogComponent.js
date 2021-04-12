@@ -16,12 +16,11 @@ import { uploadDocument, uploadGraph } from "lbd-server";
 import AppContext from "@context";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 
-
 const useStyles = makeStyles((theme) => ({
   root: {
     backgroundColor: theme.palette.background.paper,
     width: "100%",
-  }
+  },
 }));
 
 const DialogComponent = (props) => {
@@ -32,6 +31,7 @@ const DialogComponent = (props) => {
   const [docType, setDocType] = useState(null);
   const [label, setLabel] = useState();
   const [description, setDescription] = useState();
+  const [isXml, setIsXml] = useState();
   const [uploadType, setUploadType] = useState(props.type);
 
   function handleInput(e) {
@@ -58,18 +58,18 @@ const DialogComponent = (props) => {
         default:
           break;
       }
-      beforeClose()
+      beforeClose();
     } catch (error) {
       beforeClose(error);
     }
   }
 
   async function beforeClose(error) {
-    setLabel("")
-    setDescription("")
-    setFileToUpload(null)
+    setLabel("");
+    setIsXml("true");
+    setDescription("");
+    setFileToUpload(null);
     props.onClose(error);
-
   }
 
   async function uploadNamedGraphToServer() {
@@ -79,6 +79,7 @@ const DialogComponent = (props) => {
           label,
           file: fileToUpload,
           description,
+          isXml,
         },
         context.currentProject.id,
         context.user.token
@@ -96,7 +97,7 @@ const DialogComponent = (props) => {
   async function uploadNewGraphToServer() {
     try {
       const response = await uploadGraph(
-        { label, description },
+        { label, description, isXml },
         context.currentProject.id,
         context.user.token
       );
@@ -117,6 +118,7 @@ const DialogComponent = (props) => {
           label,
           file: fileToUpload,
           description,
+          isXml,
         },
         context.currentProject.id,
         context.user.token
@@ -193,7 +195,7 @@ const DialogComponent = (props) => {
           label="Label"
           value={label}
           onChange={(e) => setLabel(e.target.value)}
-          style={{marginLeft: 20, marginRight: 20}}
+          style={{ marginLeft: 20, marginRight: 20 }}
         />
         <TextField
           autoFocus
@@ -202,8 +204,16 @@ const DialogComponent = (props) => {
           onChange={(e) => setDescription(e.target.value)}
           value={description}
           label="Description"
-          style={{marginLeft: 20, marginRight: 20}}
-
+          style={{ marginLeft: 20, marginRight: 20 }}
+        />
+        <TextField
+          autoFocus
+          margin="dense"
+          id="isXml"
+          onChange={(e) => setIsXml(e.target.value)}
+          value={isXml}
+          label="Is XML"
+          style={{ marginLeft: 20, marginRight: 20 }}
         />
         <input
           display="none"
@@ -235,7 +245,7 @@ const DialogComponent = (props) => {
           {props.type === "graph" ? (
             <Button
               onClick={(e) => {
-                setUploadType("newGraph")
+                setUploadType("newGraph");
                 uploadInput(e);
               }}
               variant="contained"
@@ -245,9 +255,7 @@ const DialogComponent = (props) => {
               disabled={loading}
             >
               Create New
-              {loading && (
-                <CircularProgress size={20}/>
-              )}{" "}
+              {loading && <CircularProgress size={20} />}{" "}
             </Button>
           ) : (
             <></>

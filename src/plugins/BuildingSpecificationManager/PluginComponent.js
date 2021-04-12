@@ -1,36 +1,100 @@
 import React, { useContext, useState } from "react";
 import {
-  Drawer,
   AppBar,
-  Typography,
+  List,
+  ListItem,
+  Snackbar,
   Button,
+  Switch,
+  FormGroup,
+  Box,
   Tab,
   Tabs,
+  Typography,
+  FormControlLabel,
+  Drawer,
   Slider,
 } from "@material-ui/core";
-// import useStyles from "@styles";
-import { makeStyles } from "@material-ui/core/styles";
+//import useStyles from "@styles";
+import { makeStyles, useTheme } from "@material-ui/core/styles";
 import AppContext from "@context";
 import { miniDrawerWidth } from "@styles";
 import CloudUploadIcon from "@material-ui/icons/CloudUpload";
 import PropTypes from "prop-types";
 import "./styles.css";
 import "./functions.js";
+import UploadDialog from "../ProjectPlugin/DialogComponent";
+
+import SwipeableViews from "react-swipeable-views";
+
+const drawerWidth = "33%";
+const useStyles = makeStyles((theme) => ({
+  root: {
+    display: "flex",
+  },
+  drawer: {
+    width: drawerWidth,
+    flexShrink: 0,
+    zIndex: 1,
+  },
+  drawerPaper: {
+    width: drawerWidth,
+    marginLeft: miniDrawerWidth,
+  },
+  drawerHeader: {
+    display: "flex",
+    alignItems: "center",
+    padding: theme.spacing(0, 1),
+    // necessary for content to be below app bar
+    ...theme.mixins.toolbar,
+    justifyContent: "flex-end",
+  },
+}));
+
+function a11yProps(index) {
+  return {
+    id: `full-width-tab-${index}`,
+    "aria-controls": `full-width-tabpanel-${index}`,
+  };
+}
+
+function TabPanel(props) {
+  const { children, value, index, ...other } = props;
+
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`full-width-tabpanel-${index}`}
+      aria-labelledby={`full-width-tab-${index}`}
+      {...other}
+    >
+      {value === index && (
+        <Box p={3}>
+          <Typography component={"div"}>{children}</Typography>
+        </Box>
+      )}
+    </div>
+  );
+}
+
+TabPanel.propTypes = {
+  children: PropTypes.node,
+  index: PropTypes.any.isRequired,
+  value: PropTypes.any.isRequired,
+};
 
 export default function MyPlugin() {
   const classes = useStyles();
   const { context, setContext } = useContext(AppContext);
-
-  function setState(state) {
-    setContext({
-      ...context,
-      states: { ...context.states, [context.plugin]: state },
-    });
-  }
-
-  const state = context.states[context.plugin];
-
+  const theme = useTheme();
+  const [uploadDialog, setUploadDialog] = useState(false);
   const [value, setValue] = useState(0);
+  const [error, setError] = useState(null);
+
+  const handleChangeIndex = (index) => {
+    setValue(index);
+  };
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -39,6 +103,18 @@ export default function MyPlugin() {
       dataType: ["Elements", "Specifications"][newValue],
     });
   };
+
+  function handleOpenUpload(type) {
+    console.log(context);
+    setUploadDialog(type);
+  }
+
+  function handleCloseUpload(err) {
+    if (err) {
+      setError(err.message);
+    }
+    setUploadDialog(null);
+  }
 
   return (
     <div className={classes.root}>
@@ -53,8 +129,8 @@ export default function MyPlugin() {
             }}
           >
             <div className={classes.drawerHeader}></div>
+            <h3>Building Specification Manager</h3>
             <div>
-              <h1>Building Specification Manager</h1>
               <AppBar position="static" color="default">
                 <Tabs
                   indicatorColor="primary"
@@ -68,37 +144,59 @@ export default function MyPlugin() {
                   <Tab label="Specifications" {...a11yProps(0)}></Tab>
                 </Tabs>
               </AppBar>
-              <TabPanel value={value} index={0} dir={theme.direction}>
-                <Typography>
-                  Selected Elements:
-                  {context.selection.length > 0 ? (
-                    context.selection.map((item) => {
-                      return <p> {item.guid} </p>;
-                    })
-                  ) : (
-                    <> you have to select elements! </>
-                  )}
-                </Typography>
-              </TabPanel>
+              <SwipeableViews
+                axis={theme.direction === "rtl" ? "x-reverse" : "x"}
+                index={value}
+                onChangeIndex={handleChangeIndex}
+              >
+                <TabPanel value={value} index={0} dir={theme.direction}>
+                  <Typography>
+                    Selected Elements:
+                    {context.selection.length > 0 ? (
+                      context.selection.map((item) => {
+                        return <p> {item.guid} </p>;
+                      })
+                    ) : (
+                      <> you have to select elements! </>
+                    )}
+                  </Typography>
+                </TabPanel>
 
-              <TabPanel value={value} index={1} dir={theme.direction}>
-                <h1>test</h1>
-                <Button
-                  //onClick={() => handleOpenUpload("document")}
-                  variant="contained"
-                  color="secondary"
-                  component="span"
-                  startIcon={<CloudUploadIcon fontSize="large" />}
-                  style={{
-                    bottom: 0,
-                    marginTop: "5%",
-                    left: "70%",
-                    width: "130px",
-                  }}
-                >
-                  Upload XML
-                </Button>
-              </TabPanel>
+                <TabPanel value={value} index={1} dir={theme.direction}>
+                  <h1>test</h1>
+                  {context.user ? (
+                    <div>
+                      <Button
+                        onClick={() => handleOpenUpload("document")}
+                        variant="contained"
+                        color="secondary"
+                        component="span"
+                        startIcon={<CloudUploadIcon fontSize="large" />}
+                        style={{
+                          bottom: 0,
+                          marginTop: "5%",
+                          left: "70%",
+                          width: "130px",
+                        }}
+                      >
+                        Upload XML
+                      </Button>
+                      <UploadDialog
+                        open={uploadDialog === "document" ? true : false}
+                        onClose={handleCloseUpload}
+                        text={{
+                          title: "Upload a non-RDF resource",
+                          content: "Upload a document to the current project.",
+                        }}
+                        type="document"
+                        accept="*"
+                      />
+                    </div>
+                  ) : (
+                    <div></div>
+                  )}
+                </TabPanel>
+              </SwipeableViews>
             </div>
           </Drawer>{" "}
         </div>
