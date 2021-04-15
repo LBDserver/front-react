@@ -26,6 +26,8 @@ import "./functions.js";
 import UploadDialog from "../ProjectPlugin/DialogComponent";
 
 import SwipeableViews from "react-swipeable-views";
+import QueryChangeTabsXML from "./QueryChangeTabsXML";
+import QueryChangeTabsRDF from "./QueryChangeTabsRDF";
 
 const drawerWidth = "33%";
 const useStyles = makeStyles((theme) => ({
@@ -129,7 +131,9 @@ export default function MyPlugin() {
             }}
           >
             <div className={classes.drawerHeader}></div>
-            <h3>Building Specification Manager</h3>
+            <element className="Plugin-title">
+              Building Specification Manager
+            </element>
             <div>
               <AppBar position="static" color="default">
                 <Tabs
@@ -141,7 +145,8 @@ export default function MyPlugin() {
                   value={value}
                 >
                   <Tab label="Elements" {...a11yProps(0)}></Tab>
-                  <Tab label="Specifications" {...a11yProps(0)}></Tab>
+                  <Tab label="Specifications XML" {...a11yProps(1)}></Tab>
+                  <Tab label="Specifications RDF" {...a11yProps(2)}></Tab>
                 </Tabs>
               </AppBar>
               <SwipeableViews
@@ -163,7 +168,7 @@ export default function MyPlugin() {
                 </TabPanel>
 
                 <TabPanel value={value} index={1} dir={theme.direction}>
-                  <h1>test</h1>
+                  <QueryChangeTabsXML />
                   {context.user ? (
                     <div>
                       <Button
@@ -181,14 +186,50 @@ export default function MyPlugin() {
                       >
                         Upload XML
                       </Button>
+
                       <UploadDialog
                         open={uploadDialog === "document" ? true : false}
                         onClose={handleCloseUpload}
                         text={{
-                          title: "Upload a non-RDF resource",
+                          title: "Upload an XML resource",
                           content: "Upload a document to the current project.",
                         }}
                         type="document"
+                        accept="*"
+                      />
+                    </div>
+                  ) : (
+                    <div></div>
+                  )}
+                </TabPanel>
+
+                <TabPanel value={value} index={2} dir={theme.direction}>
+                  <QueryChangeTabsRDF />
+                  {context.user ? (
+                    <div>
+                      <Button
+                        onClick={() => handleOpenUpload("graph")}
+                        variant="contained"
+                        color="secondary"
+                        component="span"
+                        startIcon={<CloudUploadIcon fontSize="large" />}
+                        style={{
+                          bottom: 0,
+                          marginTop: "5%",
+                          left: "70%",
+                          width: "130px",
+                        }}
+                      >
+                        Upload RDF
+                      </Button>
+                      <UploadDialog
+                        open={uploadDialog === "graph" ? true : false}
+                        onClose={handleCloseUpload}
+                        text={{
+                          title: "Upload an RDF resource",
+                          content: "Upload a graph to the current project.",
+                        }}
+                        type="graph"
                         accept="*"
                       />
                     </div>

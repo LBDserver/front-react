@@ -8,7 +8,7 @@ import Tab from "@material-ui/core/Tab";
 import Typography from "@material-ui/core/Typography";
 import Box from "@material-ui/core/Box";
 import AppContext from "@context";
-import QuerySparql from "./QuerySparql";
+import XQuery from "./XQuery";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -83,7 +83,7 @@ export default function QueryChangeTabs() {
         onChangeIndex={handleChangeIndex}
       >
         <TabPanel value={value} index={0} dir={theme.direction}>
-          <QuerySparql />
+          <XQuery />
         </TabPanel>
       </SwipeableViews>
     </div>

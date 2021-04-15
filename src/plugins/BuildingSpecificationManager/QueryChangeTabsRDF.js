@@ -74,7 +74,7 @@ export default function QueryChangeTabs() {
           variant="fullWidth"
           aria-label="full width tabs example"
         >
-          <Tab label="Query" {...a11yProps(0)} />
+          <Tab label="SPARQL Query for RDF" {...a11yProps(0)} />
         </Tabs>
       </AppBar>
       <SwipeableViews
