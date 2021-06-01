@@ -85,7 +85,6 @@ TabPanel.propTypes = {
   index: PropTypes.any.isRequired,
   value: PropTypes.any.isRequired,
 };
-
 export default function MyPlugin() {
   const classes = useStyles();
   const { context, setContext } = useContext(AppContext);
@@ -93,7 +92,6 @@ export default function MyPlugin() {
   const [uploadDialog, setUploadDialog] = useState(false);
   const [value, setValue] = useState(0);
   const [error, setError] = useState(null);
-
   const handleChangeIndex = (index) => {
     setValue(index);
   };
@@ -168,6 +166,19 @@ export default function MyPlugin() {
                 </TabPanel>
 
                 <TabPanel value={value} index={1} dir={theme.direction}>
+                  <Button
+                    onClick={() => handleOpenUpload("document")}
+                    variant="contained"
+                    color="secondary"
+                    component="span"
+                    style={{
+                      bottom: 20,
+                      marginTop: "5%",
+                      left: "0%",
+                    }}
+                  >
+                    Info: from .dockx to .xml
+                  </Button>
                   <QueryChangeTabsXML />
                   {context.user ? (
                     <div>
@@ -186,15 +197,14 @@ export default function MyPlugin() {
                       >
                         Upload XML
                       </Button>
-
                       <UploadDialog
                         open={uploadDialog === "document" ? true : false}
                         onClose={handleCloseUpload}
                         text={{
                           title: "Upload an XML resource",
-                          content: "Upload a document to the current project.",
+                          content: "Upload your specifications in XML format",
                         }}
-                        type="document"
+                        type="graph"
                         accept="*"
                       />
                     </div>
@@ -226,8 +236,10 @@ export default function MyPlugin() {
                         open={uploadDialog === "graph" ? true : false}
                         onClose={handleCloseUpload}
                         text={{
-                          title: "Upload an RDF resource",
-                          content: "Upload a graph to the current project.",
+                          title:
+                            "Upload your specifications as an RDF resource",
+                          content:
+                            "If your application to manage your building specifications is connected to a graph database (e.g. GraphDB), then you can export your specifications as a .ttl file'",
                         }}
                         type="graph"
                         accept="*"

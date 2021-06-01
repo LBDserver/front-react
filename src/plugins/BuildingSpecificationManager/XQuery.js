@@ -5,8 +5,7 @@ import SearchIcon from "@material-ui/icons/Search";
 import { translate, toSparql } from "sparqlalgebrajs";
 import { queryMultiple } from "lbd-server";
 
-const initialQuery = `doc(???)
-     collection(???)`;
+const initialQuery = `doc(specifications.xml)`;
 
 function XQuery() {
   const { context, setContext } = useContext(AppContext);
@@ -35,24 +34,6 @@ function XQuery() {
     }
   }
 
-  function adaptQuery() {
-    return new Promise((resolve, reject) => {
-      try {
-        let splitQuery = query.split("where");
-        if (splitQuery.length <= 1) {
-          splitQuery = query.split("WHERE");
-        }
-        context.currentProject.activeGraphs.forEach((graph) => {
-          splitQuery[0] = splitQuery[0] + `FROM <${graph}> `;
-        });
-
-        let newQuery = splitQuery[0] + "WHERE" + splitQuery[1];
-        resolve(newQuery);
-      } catch (error) {
-        reject(error);
-      }
-    });
-  }
   return (
     <Grid>
       <Grid item>

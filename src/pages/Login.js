@@ -7,33 +7,31 @@ import {
   Button,
 } from "@material-ui/core";
 import useStyles from "@styles";
-import axios from 'axios'
-import AppContext from '@context'
-import {Link} from 'react-router-dom'
-import {login} from "lbd-server"
+import axios from "axios";
+import AppContext from "@context";
+import { Link } from "react-router-dom";
+import { login } from "lbd-server";
 
 function Login(props) {
-  const classes = useStyles()
-  const {context, setContext} = useContext(AppContext)
-  const [password, setPassword] = useState("Rubinho4");
+  const classes = useStyles();
+  const { context, setContext } = useContext(AppContext);
+  const [password, setPassword] = useState("rubinho4");
   const [email, setEmail] = useState("ruben.ballegeer@gmail.com");
   const [loginError, setLoginError] = useState();
   const [loading, setLoading] = useState(false);
 
   async function submitLogin(e) {
-      e.preventDefault()
-      try {
+    e.preventDefault();
+    try {
+      setLoading(true);
+      const details = await login(email, password);
+      setLoading(false);
 
-        setLoading(true);
-        const details = await login(email, password)
-        setLoading(false);
-        
-        setContext({...context, user: details})
-        
-      } catch (error) {
-        setLoading(false);
-        setLoginError("Could not log in with these credentials")
-      }
+      setContext({ ...context, user: details });
+    } catch (error) {
+      setLoading(false);
+      setLoginError("Could not log in with these credentials");
+    }
   }
 
   return (
@@ -44,7 +42,7 @@ function Login(props) {
           <Typography variant="h2" className={classes.pageTitle}>
             Log in
           </Typography>
-          <form onSubmit={e => submitLogin(e)}>
+          <form onSubmit={(e) => submitLogin(e)}>
             <TextField
               id="email"
               name="email"
@@ -54,7 +52,10 @@ function Login(props) {
               error={loginError ? true : false}
               className={classes.textField}
               value={email}
-              onChange={(e) => {setEmail(e.target.value); setLoginError(null)}}
+              onChange={(e) => {
+                setEmail(e.target.value);
+                setLoginError(null);
+              }}
               fullWidth
             />
             <TextField
@@ -66,7 +67,10 @@ function Login(props) {
               error={loginError ? true : false}
               className={classes.textField}
               value={password}
-              onChange={(e) => {setPassword(e.target.value); setLoginError(null)}}
+              onChange={(e) => {
+                setPassword(e.target.value);
+                setLoginError(null);
+              }}
               fullWidth
             />
             <Button
@@ -83,7 +87,8 @@ function Login(props) {
             </Button>
             <br />
             <p styles={{ padding: "20px" }}>
-              Don't have an account yet? Create one <Link to="/register">here</Link>.
+              Don't have an account yet? Create one{" "}
+              <Link to="/register">here</Link>.
             </p>
           </form>
         </Grid>

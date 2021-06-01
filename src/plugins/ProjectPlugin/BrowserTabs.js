@@ -83,6 +83,7 @@ export default function BrowserTabs() {
   };
 
   const handleDocumentSelected = (e) => {
+    console.log(context);
     let activeDocuments = context.currentProject.activeDocuments;
     if (!e.target.checked) {
       activeDocuments = activeDocuments.filter((item) => item !== e.target.id);
@@ -96,6 +97,7 @@ export default function BrowserTabs() {
   };
 
   const handleGraphSelected = (e) => {
+    console.log(context);
     let activeGraphs = context.currentProject.activeGraphs;
 
     if (e.target.checked) {

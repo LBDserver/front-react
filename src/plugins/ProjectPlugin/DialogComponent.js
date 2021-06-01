@@ -31,7 +31,6 @@ const DialogComponent = (props) => {
   const [docType, setDocType] = useState(null);
   const [label, setLabel] = useState();
   const [description, setDescription] = useState();
-  const [isXml, setIsXml] = useState();
   const [uploadType, setUploadType] = useState(props.type);
 
   function handleInput(e) {
@@ -66,7 +65,6 @@ const DialogComponent = (props) => {
 
   async function beforeClose(error) {
     setLabel("");
-    setIsXml("true");
     setDescription("");
     setFileToUpload(null);
     props.onClose(error);
@@ -79,7 +77,6 @@ const DialogComponent = (props) => {
           label,
           file: fileToUpload,
           description,
-          isXml,
         },
         context.currentProject.id,
         context.user.token
@@ -97,7 +94,7 @@ const DialogComponent = (props) => {
   async function uploadNewGraphToServer() {
     try {
       const response = await uploadGraph(
-        { label, description, isXml },
+        { label, description },
         context.currentProject.id,
         context.user.token
       );
@@ -118,7 +115,6 @@ const DialogComponent = (props) => {
           label,
           file: fileToUpload,
           description,
-          isXml,
         },
         context.currentProject.id,
         context.user.token
@@ -206,15 +202,7 @@ const DialogComponent = (props) => {
           label="Description"
           style={{ marginLeft: 20, marginRight: 20 }}
         />
-        <TextField
-          autoFocus
-          margin="dense"
-          id="isXml"
-          onChange={(e) => setIsXml(e.target.value)}
-          value={isXml}
-          label="Is XML"
-          style={{ marginLeft: 20, marginRight: 20 }}
-        />
+
         <input
           display="none"
           id="contained-button-file"
