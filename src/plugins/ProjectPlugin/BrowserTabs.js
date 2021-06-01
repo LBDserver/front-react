@@ -2,7 +2,20 @@ import React, { useContext, useState } from "react";
 import PropTypes from "prop-types";
 import SwipeableViews from "react-swipeable-views";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
-import { AppBar, List, ListItem, Snackbar, Button, Switch, FormGroup, Box, Tab, Tabs, Typography, FormControlLabel } from "@material-ui/core";
+import {
+  AppBar,
+  List,
+  ListItem,
+  Snackbar,
+  Button,
+  Switch,
+  FormGroup,
+  Box,
+  Tab,
+  Tabs,
+  Typography,
+  FormControlLabel,
+} from "@material-ui/core";
 import MuiAlert from "@material-ui/lab/Alert";
 import CloudUploadIcon from "@material-ui/icons/CloudUpload";
 import CloseIcon from "@material-ui/icons/Close";
@@ -269,7 +282,16 @@ export default function BrowserTabs() {
               >
                 Upload
               </Button>
-              <UploadDialog open={(uploadDialog === "document") ? true : false} onClose={handleCloseUpload} text={{title: "Upload a non-RDF resource", content: "Upload a document to the current project."}} type="document" accept="*"/>
+              <UploadDialog
+                open={uploadDialog === "document" ? true : false}
+                onClose={handleCloseUpload}
+                text={{
+                  title: "Upload a non-RDF resource",
+                  content: "Upload a document to the current project.",
+                }}
+                type="document"
+                accept="*"
+              />
             </div>
           ) : (
             <div></div>
@@ -358,7 +380,17 @@ export default function BrowserTabs() {
               >
                 Upload
               </Button>
-              <UploadDialog open={(uploadDialog === "graph") ? true : false} onClose={handleCloseUpload} text={{title: "Upload an RDF graph", content: "Upload an RDF graph to the current project or create an empty graph"}} type="graph" accept=".ttl, .rdf"/>
+              <UploadDialog
+                open={uploadDialog === "graph" ? true : false}
+                onClose={handleCloseUpload}
+                text={{
+                  title: "Upload an RDF graph",
+                  content:
+                    "Upload an RDF graph to the current project or create an empty graph",
+                }}
+                type="graph"
+                accept=".ttl, .rdf"
+              />
             </div>
           ) : (
             <div></div>
@@ -374,11 +406,21 @@ export default function BrowserTabs() {
             variant="outlined"
             color="primary"
             component="span"
-            startIcon={<CloudUploadIcon fontSize="large" />} 
+            startIcon={<CloudUploadIcon fontSize="large" />}
           >
             Convert IFC
           </Button>
-          <UploadDialog open={(uploadDialog === "ifc") ? true : false} onClose={handleCloseUpload} text={{title: "Upload an IFC file", content: "Upload an IFC file to the LBDserver.  It will split up in an RDF graph and a glTF geometric file."}} type="ifc" accept=".ifc"/>
+          <UploadDialog
+            open={uploadDialog === "ifc" ? true : false}
+            onClose={handleCloseUpload}
+            text={{
+              title: "Upload an IFC file",
+              content:
+                "Upload an IFC file to the LBDserver.  It will split up in an RDF graph and a glTF geometric file.",
+            }}
+            type="ifc"
+            accept=".ifc"
+          />
         </div>
       ) : (
         <></>
